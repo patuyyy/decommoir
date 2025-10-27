@@ -8,7 +8,6 @@ const router = express.Router();
 const User = require('../models/user.model');
 const userRepository = require('../repositories/auth.repositories');
 const { successResponse, errorResponse } = require('../utils/baseResponse');
-const { configDotenv } = require('dotenv');
 
 async function getAllUsers(req, res) {
     try {
@@ -30,6 +29,20 @@ async function getUserByUsername(req, res) {
         }
     } catch (error) {
         errorResponse(res, 500, "Failed to retrieve user", error);
+    }
+}
+
+async function getProfile(req, res) {   
+    try {
+        const id = req.user.id;
+        const user = await userRepository.getUserById(id);
+        if (user) {
+            res.status(200).json({ message: "Profile successfully retrieved", data: user });
+        } else {
+            res.status(404).json({ message: "User not found" });
+        }
+    } catch (error) {
+        res.status(500).json({ message: "Failed to retrieve profile", error });
     }
 }
 
@@ -59,13 +72,50 @@ async function loginUser(req, res) {
         const user = await userRepository.getUserByUsername(username);
         const passwordMatch = user ? await bcrypt.compare(password, user.password) : false;
         if (user && passwordMatch) {
-            const token = jwt.sign({ id: user.id }, process.env.JSON_WEB_TOKEN_SECRET, { expiresIn: '1h' });
+            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES });
             successResponse(res, 200, "Login successful", { token });
         } else {
-            res.status(401).json({ error: 'Username atau password salah' });
+            errorResponse(res, 401, "Invalid username or password");
         }
     } catch (error) {
-        res.status(500).json({ error: 'Gagal melakukan login' });
+        errorResponse(res, 500, "Failed to login", error);
+    }
+}
+
+async function updateUser(req, res) {
+    const id = req.user.id;
+    const { name, email, username } = req.body;
+
+    try {
+        const updatedUser = await userRepository.updateUser(id, { name, email, username });
+        if (updatedUser) {
+            successResponse(res, 200, 'User successfully updated', updatedUser);
+        } else {
+            errorResponse(res, 400, 'No fields to update');
+        }
+    } catch (error) {
+        errorResponse(res, 500, 'Failed to update user', error);
+    }
+}
+
+async function changePassword(req, res) {
+    const id = req.user.id;
+    const { oldPassword, newPassword } = req.body;
+
+    try {
+        const user = await userRepository.getUserById(id);
+
+        const passwordMatch = await bcrypt.compare(oldPassword, user.password);
+        if (!passwordMatch) {
+            errorResponse(res, 401, 'Old password is incorrect');
+        }
+
+        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+        await userRepository.updatePassword(id, hashedNewPassword );
+
+        successResponse(res, 200, 'Password successfully changed');
+    } catch (error) {
+        errorResponse(res, 500, 'Failed to change password', error);
     }
 }
 
@@ -74,4 +124,7 @@ module.exports = {
     getUserByUsername,
     registerUser,
     loginUser,
+    getProfile,
+    updateUser,
+    changePassword
 };

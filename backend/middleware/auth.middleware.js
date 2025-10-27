@@ -1,17 +1,22 @@
 const jwt = require('jsonwebtoken')
+require('dotenv').config()
 
+// Middleware untuk verifikasi token JWT
 const verifyToken = (req, res, next) => {
-    const token = req.headers['authorization'];
-    if (!token) {
-        return res.status(401).json({ error: 'No token provided' });
-    }
-    jwt.verify(token, process.env.JSON_WEB_TOKEN_SECRET, (err, decoded) => {
-        if (err) {
-            return res.status(401).json({ error: 'Failed to authenticate token' });
-        }
-        req.userId = decoded.id;
-        next();
-    });
-};
+  const authHeader = req.headers['authorization']
+  const token = authHeader && authHeader.split(' ')[1] // ambil setelah 'Bearer '
 
-module.exports = verifyToken;
+  if (!token) {
+    return res.status(401).json({ message: 'No token provided' })
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    req.user = decoded // simpan data user dari token
+    next()
+  } catch (err) {
+    return res.status(403).json({ message: 'Invalid or expired token' })
+  }
+}
+
+module.exports = verifyToken
