@@ -44,7 +44,7 @@ pipeline {
             echo "Success! Backend deployed."
         }
         failure {
-            echo "❌ Failed to deploy backend."
+            echo "Failed to deploy backend."
         }
     }
 }
