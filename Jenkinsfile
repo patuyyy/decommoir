@@ -1,29 +1,31 @@
 pipeline {
-    agent any
-
-    triggers {
-        githubPush() 
-    }
+    agent { label 'docker' }
 
     environment {
-        DOCKER_IMAGE = "decommoir-backend:latest"
-        CONTAINER_NAME = "decommoir-backend"
-        BACKEND_DIR = "backend"
+        IMAGE_NAME = "decommoir-backend"
+        CONTAINER_NAME = "decommoir_backend"
+        EXPRESS_ENV = credentials('decommoir_backend_enva')
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', 
-                    credentialsId: 'github-token', 
-                    url: 'https://github.com/patuyyy/decommoir.git'
+                git branch: 'main', url: 'https://github.com/patuyyy/decommoir.git'
+            }
+        }
+
+        stage('Create .env') {
+            steps {
+                dir('backend') {
+                    sh 'echo "$EXPRESS_ENV" > .env'
+                }
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                dir("${BACKEND_DIR}") {
-                    sh 'docker build -t $DOCKER_IMAGE .'
+                dir('backend') {
+                    sh 'docker build -t $IMAGE_NAME .'
                 }
             }
         }
@@ -31,20 +33,13 @@ pipeline {
         stage('Deploy Container') {
             steps {
                 sh '''
-                docker stop $CONTAINER_NAME || true
-                docker rm $CONTAINER_NAME || true
-                docker run -d --name $CONTAINER_NAME -p 3000:3000 $DOCKER_IMAGE
+                if [ "$(docker ps -q -f name=$CONTAINER_NAME)" ]; then
+                    docker stop $CONTAINER_NAME
+                    docker rm $CONTAINER_NAME
+                fi
+                docker run -d --name $CONTAINER_NAME --env-file backend/.env -p 3000:3000 $IMAGE_NAME
                 '''
             }
-        }
-    }
-
-    post {
-        success {
-            echo "Success! Backend deployed."
-        }
-        failure {
-            echo "Failed to deploy backend."
         }
     }
 }
