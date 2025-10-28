@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "decommoir-backend"
         CONTAINER_NAME = "decommoir_backend"
-        EXPRESS_ENV = credentials('decommoir_backend_enva')
+        EXPRESS_ENV = credentials('decommoir_backend_env')
     }
 
     stages {
@@ -40,6 +40,14 @@ pipeline {
                 docker run -d --name $CONTAINER_NAME --env-file backend/.env -p 3000:3000 $IMAGE_NAME
                 '''
             }
+        }
+    }
+    post {
+        success {
+            echo "Success! Backend deployed."
+        }
+        failure {
+            echo "Failed to deploy backend."
         }
     }
 }
