@@ -1,5 +1,4 @@
 const express = require('express');
-const pool = require('../lib/db.pg');
 const userController = require('../controllers/auth.controller');
 const verifyToken = require('../middleware/auth.middleware');
 
@@ -25,5 +24,11 @@ router.put('/update', verifyToken, userController.updateUser);
 
 // Route untuk ganti password user
 router.put('/update/password', verifyToken, userController.changePassword);
+
+// Route untuk mengubah peran user (hanya untuk admin)
+router.put('/update/role/:id', verifyToken, userController.updateUserRole);
+
+// Route untuk menghapus user (hanya untuk admin)
+router.delete('/delete/:id', verifyToken, userController.deleteUser);
 
 module.exports = router;
