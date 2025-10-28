@@ -1,11 +1,6 @@
-const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const pool = require('../lib/db.pg');
 
-const router = express.Router();
-
-const User = require('../models/user.model');
 const userRepository = require('../repositories/auth.repositories');
 const { successResponse, errorResponse } = require('../utils/baseResponse');
 
@@ -32,7 +27,7 @@ async function getUserByUsername(req, res) {
     }
 }
 
-async function getProfile(req, res) {   
+async function getProfile(req, res) {
     try {
         const id = req.user.id;
         const user = await userRepository.getUserById(id);
@@ -47,7 +42,6 @@ async function getProfile(req, res) {
 }
 
 async function registerUser(req, res) {
-    console.log(req.body);
     const { name, email, username, password } = req.body;
     try {
         if (!name || !email || !username || !password) {
@@ -72,7 +66,7 @@ async function loginUser(req, res) {
         const user = await userRepository.getUserByUsername(username);
         const passwordMatch = user ? await bcrypt.compare(password, user.password) : false;
         if (user && passwordMatch) {
-            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES });
+            const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES });
             successResponse(res, 200, "Login successful", { token });
         } else {
             errorResponse(res, 401, "Invalid username or password");
@@ -111,11 +105,45 @@ async function changePassword(req, res) {
         }
 
         const hashedNewPassword = await bcrypt.hash(newPassword, 10);
-        await userRepository.updatePassword(id, hashedNewPassword );
+        await userRepository.updatePassword(id, hashedNewPassword);
 
         successResponse(res, 200, 'Password successfully changed');
     } catch (error) {
         errorResponse(res, 500, 'Failed to change password', error);
+    }
+}
+
+async function updateUserRole(req, res) {
+    const { id } = req.params;
+    const { role } = req.body;
+    const admin = req.user.role;
+
+    try {
+        if (admin !== 'admin') {
+            return errorResponse(res, 403, 'Only admin can update user roles');
+        }
+        const updatedUser = await userRepository.updateUserRole(id, role);
+        if (updatedUser) {
+            successResponse(res, 200, 'User role successfully updated', updatedUser);
+        } else {
+            errorResponse(res, 400, 'No fields to update');
+        }
+    } catch (error) {
+        errorResponse(res, 500, 'Failed to update user role', error);
+    }
+}
+
+async function deleteUser(req, res) {
+    const { id } = req.params;
+    const admin = req.user.role;
+    try {
+        if (admin !== 'admin') {
+            return errorResponse(res, 403, 'Only admin can delete users');
+        }
+        await userRepository.deleteUser(id);
+        successResponse(res, 200, 'User successfully deleted');
+    } catch (error) {
+        errorResponse(res, 500, 'Failed to delete user', error);
     }
 }
 
@@ -126,5 +154,7 @@ module.exports = {
     loginUser,
     getProfile,
     updateUser,
-    changePassword
+    changePassword,
+    updateUserRole,
+    deleteUser
 };

@@ -1,8 +1,4 @@
-const express = require('express');
 const pool = require('../lib/db.pg');
-
-const router = express.Router();
-
 
 async function getAllUsers() {
     const query = 'SELECT * FROM users';
@@ -78,6 +74,24 @@ async function updatePassword(id, password) {
     await pool.query(query, values);
 }
 
+async function updateUserRole(id, role) {
+    const query = `
+    UPDATE users 
+    SET role = $1, updated_at = NOW()
+    WHERE id = $2
+    RETURNING id, name, email, username, role, created_at, updated_at
+  `;
+    const values = [role, id];
+    const result = await pool.query(query, values);
+    return result.rows[0];
+}
+
+async function deleteUser(id) {
+    const query = 'DELETE FROM users WHERE id = $1';
+    const values = [id];
+    await pool.query(query, values);
+}
+
 
 module.exports = {
     getUserByUsername,
@@ -85,5 +99,7 @@ module.exports = {
     getAllUsers,
     getUserById,
     updateUser,
-    updatePassword
+    updatePassword,
+    updateUserRole,
+    deleteUser
 };
