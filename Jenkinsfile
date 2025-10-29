@@ -54,8 +54,8 @@ pipeline {
             echo "Failed to deploy backend."
         }
         always {
-            echo "Cleaning up .env file..."
-            sh 'rm -f ${ENV_FILE_PATH}'
+            // echo "Cleaning up .env file..."
+            // sh 'rm -f ${ENV_FILE_PATH}'
             
             sh 'docker image prune -f'
         }
