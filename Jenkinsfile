@@ -19,8 +19,9 @@ pipeline {
 
         stage('Create .env (on Host)') {
             steps {
-                dir('backend') {
-                    writeFile file: '.env', text: "$EXPRESS_ENV"
+                withCredentials([file(credentialsId: 'decommoir_backend_env', variable: 'SECRET_ENV_FILE')]) {
+                    
+                    sh "cp $SECRET_ENV_FILE ${ENV_FILE_PATH}"
                 }
             }
         }
