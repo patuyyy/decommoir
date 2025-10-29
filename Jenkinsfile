@@ -19,7 +19,7 @@ pipeline {
 
         stage('Create .env (on Host)') {
             steps {
-                dir('backend') 
+                dir('backend') {
                     writeFile file: '.env', text: "$EXPRESS_ENV"
                 }
             }
