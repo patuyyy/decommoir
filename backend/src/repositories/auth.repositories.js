@@ -1,4 +1,4 @@
-const pool = require('../lib/db.pg');
+const pool = require('../config/db.pg');
 
 async function getAllUsers() {
     const query = 'SELECT * FROM users';
@@ -20,7 +20,6 @@ async function getUserById(id) {
 }
 
 async function addUser({ name, email, username, password }) {
-    console.log(name);
     const query = 'INSERT INTO users (name, email, username, password) VALUES ($1, $2, $3, $4) RETURNING *';
     const values = [name, email, username, password];
     const res = await pool.query(query, values);
@@ -28,7 +27,7 @@ async function addUser({ name, email, username, password }) {
 }
 
 async function updateUser(id, data) {
-    const { name, email, username } = data;
+    const { name, email, username, photo_url } = data;
 
     const fields = [];
     const values = [];
@@ -45,6 +44,10 @@ async function updateUser(id, data) {
     if (username) {
         fields.push(`username = $${index++}`);
         values.push(username);
+    }
+    if (photo_url) {
+        fields.push(`photo_url = $${index++}`);
+        values.push(photo_url);
     }
 
 

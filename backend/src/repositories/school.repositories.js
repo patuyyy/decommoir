@@ -1,6 +1,6 @@
-const pool = require('../lib/db.pg');
+const pool = require('../config/db.pg');
 
-async function getAllScools() {
+async function getAllSchools() {
     const query = 'SELECT * FROM schools';
     const res = await pool.query(query);
     return res.rows;
@@ -52,7 +52,7 @@ async function updateSchool(id, data) {
 }
 
 module.exports = {
-    getAllScools,
+    getAllSchools,
     getSchoolById,
     addSchool,
 };

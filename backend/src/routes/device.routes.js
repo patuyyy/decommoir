@@ -5,7 +5,7 @@ const verifyToken = require('../middleware/auth.middleware');
 const router = express.Router();
 
 // Route untuk mendapatkan semua device
-router.get('/', deviceController.getAllDevices);
+router.get('/', verifyToken, deviceController.getAllDevices);
 
 // Route untuk mendapatkan device berdasarkan ID
 router.get('/:id', verifyToken, deviceController.getDeviceById);
@@ -14,9 +14,13 @@ router.get('/:id', verifyToken, deviceController.getDeviceById);
 router.post('/add', verifyToken, deviceController.addDevice);
 
 // Route untuk memperbarui device
-// router.put('/devices/:id', verifyToken, deviceController.updateDevice);
+router.put('/update/:id', verifyToken, deviceController.updateDevice);
 
 // Route untuk menghapus device
-// router.delete('/devices/:id', verifyToken, deviceController.deleteDevice);
+router.delete('/delete/:id', verifyToken, deviceController.deleteDevice);
+
+// Route untuk maintenance device
+router.post('/maintenance/:id', verifyToken, deviceController.maintenanceDevice);
+
 
 module.exports = router;

@@ -1,5 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { cloudinary } = require('../config/db.cloudinary');
+const fs = require('fs');
 
 const userRepository = require('../repositories/auth.repositories');
 const { successResponse, errorResponse } = require('../utils/baseResponse');
@@ -78,10 +80,10 @@ async function loginUser(req, res) {
 
 async function updateUser(req, res) {
     const id = req.user.id;
-    const { name, email, username } = req.body;
+    const { name, email, username, photo_url } = req.body;
 
     try {
-        const updatedUser = await userRepository.updateUser(id, { name, email, username });
+        const updatedUser = await userRepository.updateUser(id, { name, email, username, photo_url });
         if (updatedUser) {
             successResponse(res, 200, 'User successfully updated', updatedUser);
         } else {
@@ -147,6 +149,28 @@ async function deleteUser(req, res) {
     }
 }
 
+async function updatePhoto(req, res) {
+    const  id  = req.user.id;
+    try {
+        if (!req.file) {
+            return errorResponse(res, 400, 'No file uploaded');
+        }
+        const result = await cloudinary.uploader.upload(req.file.path, {
+            folder: 'decommoir/user_photos',
+            public_id: `user_${id}_photo`,
+            overwrite: true,
+            resource_type: 'image',
+        });
+
+        fs.unlinkSync(req.file.path);
+
+        const updatedUser = await userRepository.updateUser(id, { photo_url: result.secure_url });
+        successResponse(res, 200, 'Photo successfully updated', updatedUser);
+    } catch (error) {
+        errorResponse(res, 500, 'Failed to update photo', error);
+    }
+}
+
 module.exports = {
     getAllUsers,
     getUserByUsername,
@@ -156,5 +180,6 @@ module.exports = {
     updateUser,
     changePassword,
     updateUserRole,
-    deleteUser
+    deleteUser,
+    updatePhoto
 };
