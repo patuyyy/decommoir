@@ -76,7 +76,7 @@ async function loginUser(req, res) {
 
         if (user && passwordMatch) {
             const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES });
-            successResponse(res, 200, "Login successful", { token });
+            successResponse(res, 200, "Login successful", { token, user: { id: user.id, name: user.name, email: user.email, school_id: user.school_id, username: user.username, role: user.role } });
         } else {
             errorResponse(res, 401, "Invalid username or password");
         }
