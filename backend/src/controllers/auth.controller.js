@@ -44,18 +44,18 @@ async function getProfile(req, res) {
 }
 
 async function registerUser(req, res) {
-    const { name, email, username, password } = req.body;
+    const { name, email, school_id, username, password } = req.body;
     try {
         if (!name || !email || !username || !password) {
             return errorResponse(res, 400, "All fields are required");
         }
-        const existingUser = await userRepository.getUserByUsername(username);
+        const existingUser = await userRepository.getUserByEmail(email);
         if (existingUser) {
-            return errorResponse(res, 409, "Username already exists");
+            return errorResponse(res, 409, "Account already exists");
         }
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const newUser = await userRepository.addUser({ name, email, username, password: hashedPassword });
+        const newUser = await userRepository.addUser({ name, email, school_id, username, password: hashedPassword });
         successResponse(res, 201, "User successfully registered", newUser);
     } catch (error) {
         errorResponse(res, 500, "Failed to register user", error);
@@ -65,8 +65,15 @@ async function registerUser(req, res) {
 async function loginUser(req, res) {
     const { username, password } = req.body;
     try {
-        const user = await userRepository.getUserByUsername(username);
+        const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(username);
+        let user;
+        if (isEmail) {
+            user = await userRepository.getUserByEmail(username);
+        } else {
+            user = await userRepository.getUserByUsername(username);
+        }
         const passwordMatch = user ? await bcrypt.compare(password, user.password) : false;
+
         if (user && passwordMatch) {
             const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES });
             successResponse(res, 200, "Login successful", { token });

@@ -12,6 +12,14 @@ async function getUserByUsername(username) {
     const res = await pool.query(query, values);
     return res.rows[0];
 }
+
+async function getUserByEmail(email) {
+    const query = 'SELECT * FROM users WHERE email = $1';
+    const values = [email];
+    const res = await pool.query(query, values);
+    return res.rows[0];
+}
+
 async function getUserById(id) {
     const query = 'SELECT * FROM users WHERE id = $1';
     const values = [id];
@@ -19,9 +27,9 @@ async function getUserById(id) {
     return res.rows[0];
 }
 
-async function addUser({ name, email, username, password }) {
-    const query = 'INSERT INTO users (name, email, username, password) VALUES ($1, $2, $3, $4) RETURNING *';
-    const values = [name, email, username, password];
+async function addUser({ name, email, school_id, username, password }) {
+    const query = 'INSERT INTO users (name, email, school_id, username, password) VALUES ($1, $2, $3, $4, $5) RETURNING *';
+    const values = [name, email, school_id, username, password];
     const res = await pool.query(query, values);
     return res.rows[0];
 }
