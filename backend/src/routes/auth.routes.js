@@ -35,4 +35,10 @@ router.delete('/delete/:id', verifyToken, userController.deleteUser);
 // Route untuk mengupdate foto user
 router.post('/update/photo', verifyToken, upload.single('image'), userController.updatePhoto);
 
+// Route for handling Google response (example route, adjust as needed)
+router.post('/google-response', userController.handleGoogleResponse);
+
+// Route for registering user with Google
+router.post('/google-register', userController.registerUserWithGoogle);
+
 module.exports = router;
