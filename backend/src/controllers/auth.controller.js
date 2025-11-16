@@ -1,5 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { cloudinary } = require('../config/db.cloudinary');
+const fs = require('fs');
 
 const userRepository = require('../repositories/auth.repositories');
 const { successResponse, errorResponse } = require('../utils/baseResponse');
@@ -42,18 +44,18 @@ async function getProfile(req, res) {
 }
 
 async function registerUser(req, res) {
-    const { name, email, username, password } = req.body;
+    const { name, email, school_id, username, password } = req.body;
     try {
         if (!name || !email || !username || !password) {
             return errorResponse(res, 400, "All fields are required");
         }
-        const existingUser = await userRepository.getUserByUsername(username);
+        const existingUser = await userRepository.getUserByEmail(email);
         if (existingUser) {
-            return errorResponse(res, 409, "Username already exists");
+            return errorResponse(res, 409, "Account already exists");
         }
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const newUser = await userRepository.addUser({ name, email, username, password: hashedPassword });
+        const newUser = await userRepository.addUser({ name, email, school_id, username, password: hashedPassword });
         successResponse(res, 201, "User successfully registered", newUser);
     } catch (error) {
         errorResponse(res, 500, "Failed to register user", error);
@@ -63,11 +65,18 @@ async function registerUser(req, res) {
 async function loginUser(req, res) {
     const { username, password } = req.body;
     try {
-        const user = await userRepository.getUserByUsername(username);
+        const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(username);
+        let user;
+        if (isEmail) {
+            user = await userRepository.getUserByEmail(username);
+        } else {
+            user = await userRepository.getUserByUsername(username);
+        }
         const passwordMatch = user ? await bcrypt.compare(password, user.password) : false;
+
         if (user && passwordMatch) {
             const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES });
-            successResponse(res, 200, "Login successful", { token });
+            successResponse(res, 200, "Login successful", { token, user: { id: user.id, name: user.name, email: user.email, school_id: user.school_id, username: user.username, role: user.role } });
         } else {
             errorResponse(res, 401, "Invalid username or password");
         }
@@ -78,10 +87,10 @@ async function loginUser(req, res) {
 
 async function updateUser(req, res) {
     const id = req.user.id;
-    const { name, email, username } = req.body;
+    const { name, email, username, photo_url } = req.body;
 
     try {
-        const updatedUser = await userRepository.updateUser(id, { name, email, username });
+        const updatedUser = await userRepository.updateUser(id, { name, email, username, photo_url });
         if (updatedUser) {
             successResponse(res, 200, 'User successfully updated', updatedUser);
         } else {
@@ -147,6 +156,28 @@ async function deleteUser(req, res) {
     }
 }
 
+async function updatePhoto(req, res) {
+    const  id  = req.user.id;
+    try {
+        if (!req.file) {
+            return errorResponse(res, 400, 'No file uploaded');
+        }
+        const result = await cloudinary.uploader.upload(req.file.path, {
+            folder: 'decommoir/user_photos',
+            public_id: `user_${id}_photo`,
+            overwrite: true,
+            resource_type: 'image',
+        });
+
+        fs.unlinkSync(req.file.path);
+
+        const updatedUser = await userRepository.updateUser(id, { photo_url: result.secure_url });
+        successResponse(res, 200, 'Photo successfully updated', updatedUser);
+    } catch (error) {
+        errorResponse(res, 500, 'Failed to update photo', error);
+    }
+}
+
 module.exports = {
     getAllUsers,
     getUserByUsername,
@@ -156,5 +187,6 @@ module.exports = {
     updateUser,
     changePassword,
     updateUserRole,
-    deleteUser
+    deleteUser,
+    updatePhoto
 };

@@ -4,6 +4,7 @@
 
     const authRouter = require('./routes/auth.routes')
     const deviceRouter = require('./routes/device.routes')
+    const schoolRouter = require('./routes/school.routes')
 
     const app = express()
 
@@ -15,6 +16,8 @@
     app.use(cors())
     app.use('/api/auth', authRouter)
     app.use('/api/devices', deviceRouter)
+    app.use('/api/schools', schoolRouter)   
+    
 
     app.listen(process.env.PORT, '0.0.0.0', () => {
         console.log(`Server running at http://localhost:${process.env.PORT}`);

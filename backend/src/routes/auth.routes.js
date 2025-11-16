@@ -1,6 +1,7 @@
 const express = require('express');
 const userController = require('../controllers/auth.controller');
 const verifyToken = require('../middleware/auth.middleware');
+const upload = require('../middleware/multer.middleware');
 
 const router = express.Router();
 
@@ -30,5 +31,8 @@ router.put('/update/role/:id', verifyToken, userController.updateUserRole);
 
 // Route untuk menghapus user (hanya untuk admin)
 router.delete('/delete/:id', verifyToken, userController.deleteUser);
+
+// Route untuk mengupdate foto user
+router.post('/update/photo', verifyToken, upload.single('image'), userController.updatePhoto);
 
 module.exports = router;
