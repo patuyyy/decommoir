@@ -31,13 +31,24 @@ export const registerUser = async (credentials) => {
 
 export const registerUserWithGoogle = async (credentials) => {
   try {
+    console.log("Registering user with Google:", credentials);
     const response = await api.post("/api/auth/google-register", {
       google_token: credentials.google_token,
       school_id: credentials.school_id,
+      username: credentials.username,
     });
     return response.data;
   } catch (error) {
     console.error("Error registering user with Google:", error);
+    throw error;
+  }
+};
+
+export const checkGoogleUser = async (google_token) => {
+  try {
+    return await api.post("/api/auth/google-response", { google_token });
+  } catch (error) {
+    console.error("Error checking Google user:", error);
     throw error;
   }
 };

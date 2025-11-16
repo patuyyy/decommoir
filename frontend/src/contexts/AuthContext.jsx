@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext } from "react";
 import { loginUser } from "../actions/auth.actions";
 import { registerUserWithGoogle } from "../actions/auth.actions";
+import { checkGoogleUser } from "../actions/auth.actions";
 
 const AuthContext = createContext();
 
@@ -25,6 +26,41 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const checkGoogleUserContext = async (google_token) => {
+    try {
+      const result = await checkGoogleUser(google_token);
+      if (result.data.data != null) {
+        const token = result.data.data.token;
+        const user = result.data.data.user;
+        setToken(token);
+        setUser(user);
+        return { user, token };
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error("Google Login failed:", error);
+      throw error;
+    }
+  };
+  
+  const registerGoogleUserContext = async (credential) => {
+    try {
+      const result = await registerUserWithGoogle(credential);
+      console.log(result);
+      const token = result.data.token;
+      const user = result.data.user;
+      setToken(token);
+      setUser(user);
+      return { user, token };
+
+    } catch (error) {
+      console.error("Google Registration failed:", error);
+      throw error;
+    }
+  }
+
+
   const setGoogleAuthToken = (token) => {
     setGoogleToken(token);
   };
@@ -48,7 +84,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, googleToken, login, logout, authFetch, setGoogleAuthToken, clearGoogleAuthToken }}>
+    <AuthContext.Provider value={{ user, token, googleToken, login, checkGoogleUserContext, registerGoogleUserContext, logout, authFetch, setGoogleAuthToken, clearGoogleAuthToken }}>
       {children}
     </AuthContext.Provider>
   );

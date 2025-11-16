@@ -15,7 +15,7 @@ import { useAuth } from "../contexts/AuthContext";
 
 export default function RegisterPage() {
     const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-    const { googleToken, setGoogleAuthToken } = useAuth();
+    const { googleToken, setGoogleAuthToken, checkGoogleUserContext } = useAuth();
     const [schools, setSchools] = useState([]);
     const navigate = useNavigate();
 
@@ -31,9 +31,19 @@ export default function RegisterPage() {
 
     function handleGoogleResponse(response) {
         const token = response.credential;
-        console.log("JWT Google:", token);
-        navigate("/fillschool");
+        setGoogleAuthToken(token);
+        handleGoogleLogin(token);
     }
+
+    const handleGoogleLogin = async (token) => {
+        const isUser = await checkGoogleUserContext(token);
+        if (isUser == null) {
+            navigate("/fillschool");
+        }
+        else {
+            navigate("/dashboard");
+        }
+    };
 
     useEffect(() => {
         const start = () => {

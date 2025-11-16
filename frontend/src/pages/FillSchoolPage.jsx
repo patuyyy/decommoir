@@ -9,9 +9,10 @@ import { getAllSchools } from "../actions/schools.actions";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { checkGoogleUser } from "../actions/auth.actions";
 
 export default function FillSchoolPage() {
-    const { googleToken } = useAuth();
+    const { googleToken, registerGoogleUserContext } = useAuth();
     const [schools, setSchools] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [isOpen, setIsOpen] = useState(false);
@@ -19,21 +20,23 @@ export default function FillSchoolPage() {
     const navigate = useNavigate();
 
     const [form, setForm] = useState({
-        name: "",
-        email: "",
+        google_token: googleToken,
         username: "",
         school_id: "",
-        google_id: "",
-        password: null,
     });
 
     const filteredSchools = schools.filter((school) =>
         school.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    function handleSubmit() {
-        console.log(form);
-        //navigate("/login");
+    const handleGoogleRegister = async () => {
+        try{
+            const response = await registerGoogleUserContext(form);
+            console.log(response);
+            navigate("/dashboard");
+        } catch (error) {
+            console.error("Google Registration failed:", error);    
+        }
     }
 
     useEffect(() => {
@@ -51,22 +54,8 @@ export default function FillSchoolPage() {
 
     useEffect(() => {
         if (!googleToken) return;
-
+        const decoded = jwtDecode(googleToken);
         try {
-            const decoded = jwtDecode(googleToken);
-
-            const updated = {
-                email: decoded?.email || "",
-                username: decoded?.email?.split("@")[0] || "", 
-                name: decoded?.name || "",
-                google_id: decoded?.sub || "",
-            };
-
-            setForm(prev => ({
-                ...prev,
-                ...updated
-            }));
-
             if (decoded?.name) setName(decoded.name);
 
         } catch (err) {
@@ -82,9 +71,20 @@ export default function FillSchoolPage() {
 
             <div className="w-full md:w-1/2 flex flex-col justify-center px-10 lg:px-24">
                 <h1 className="text-4xl font-bold mb-2 text-start">Halo {name}!</h1>
-                <p className="text-gray-600 text-xl mb-8 text-start">Masukkan detail sekolah mu untuk lanjut</p>
+                <p className="text-gray-600 text-xl mb-8 text-start">Buat username dan masukkan detail sekolah mu untuk lanjut!</p>
                 <div className="flex flex-col gap-4">
-                    <label className="ml-3 font-semibold">Sekolah</label>
+                    <label className="ml-3 -mb-3 font-semibold">Buat username!</label>
+                    <div className="relative">
+                        <FaUser size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
+                        <input
+                            type="text"
+                            placeholder=""
+                            value={form.username}
+                            onChange={(e) => setForm({ ...form, username: e.target.value })}
+                            className="w-full pl-10 px-4 py-3 rounded-xl bg-white shadow-sm"
+                        />
+                    </div>
+                    <label className="ml-3 -mb-3 font-semibold">Sekolah</label>
                     <div className="relative">
                         <FaSchool size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
                         <input
@@ -119,7 +119,7 @@ export default function FillSchoolPage() {
                         )}
                     </div>
                 </div>
-                <button onClick={handleSubmit} className="w-full mt-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all duration-300 text-center">Lanjut</button>
+                <button onClick={handleGoogleRegister} className="w-full mt-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all duration-300 text-center">Lanjut</button>
             </div>
 
             <div className="hidden md:block w-1/2 relative bg-black">

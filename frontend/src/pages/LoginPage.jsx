@@ -9,19 +9,31 @@ import { IoArrowBackCircleOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import { loginUser } from "../actions/auth.actions";
 import { useAuth } from "../contexts/AuthContext";
+import EyeShow from "../icons/EyeShow"
+import EyeNotShow from "../icons/EyeNotShow";
 
 export default function LoginPage() {
-    const { login } = useAuth();
+    const [error, setError] = useState(null);
+    const [showPassword, setShowPassword] = useState(false);
+    const { login, checkGoogleUserContext, setGoogleAuthToken } = useAuth();
     const navigate = useNavigate();
     const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-    console.log("Client ID:", CLIENT_ID);
-    
+
     function handleGoogleResponse(response) {
         const token = response.credential;
-
-        console.log("JWT Google:", token);
-        navigate("/dashboard");
+        setGoogleAuthToken(token);
+        handleGoogleLogin(token);
     }
+
+    const handleGoogleLogin = async (token) => {
+        const isUser = await checkGoogleUserContext(token);
+        if (isUser == null) {
+            navigate("/fillschool");
+        }
+        else {
+            navigate("/dashboard");
+        }
+    };
 
     const [form, setForm] = useState({
         identifier: "",
@@ -29,11 +41,17 @@ export default function LoginPage() {
     });
 
     const handleLogin = async () => {
+        setError("");
         try {
             const result = await login(form);
             navigate("/dashboard");
         } catch (error) {
             console.error(error);
+            if (error.response.status === 401) {
+                setError("Email/Username atau password salah.");
+            } else {
+                setError("Terjadi kesalahan saat login. Silakan coba lagi.");
+            }
         }
     };
 
@@ -94,10 +112,26 @@ export default function LoginPage() {
                     <label className="ml-3 font-semibold">Password</label>
                     <div className="relative shadow-md rounded-xl">
                         <MdLockOutline size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
-                        <input type="password" placeholder="" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className="w-full pl-10 pr-4 py-3 rounded-xl bg-white shadow-sm border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        <input type={showPassword ? "text" : "password"} placeholder="" className="w-full pl-10 pr-10 px-4 py-3 rounded-xl bg-white shadow-sm" onChange={(e) => setForm({ ...form, password: e.target.value })}/>
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-black"
+                        >
+                            {showPassword ? (
+                                <EyeShow />
+                            ) : (
+                                <EyeNotShow />
+                            )}
+                        </button>
                     </div>
                 </div>
                 <button onClick={handleLogin} className="w-full mt-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all duration-300 text-center">Masuk</button>
+                {error && (
+                    <p className="text-red-600 mt-3 text-center font-semibold">
+                        {error}
+                    </p>
+                )}
                 <div className="flex items-center my-6 gap-4">
                     <div className="border-t border-gray-300 w-full" />
                     <span className="text-sm text-gray-500">atau</span>
