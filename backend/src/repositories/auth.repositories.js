@@ -34,6 +34,13 @@ async function addUser({ name, email, school_id, username, password }) {
     return res.rows[0];
 }
 
+async function addUserByGoogle({ name, email, school_id, username, password, google_id }) {
+    const query = 'INSERT INTO users (name, email, school_id, username, password, google_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *';
+    const values = [name, email, school_id, username, password, google_id];
+    const res = await pool.query(query, values);
+    return res.rows[0];
+}
+
 async function updateUser(id, data) {
     const { name, email, username, photo_url } = data;
 
@@ -113,5 +120,6 @@ module.exports = {
     updateUser,
     updatePassword,
     updateUserRole,
-    deleteUser
+    deleteUser,
+    addUserByGoogle,
 };

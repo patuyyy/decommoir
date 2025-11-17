@@ -4,7 +4,6 @@ const router = express.Router();
 
 const schoolRepository = require('../repositories/school.repositories');
 const { successResponse, errorResponse } = require('../utils/baseResponse');
-// Get all schools
 async function getAllSchools(req, res) {
     try {
         const schools = await schoolRepository.getAllSchools();

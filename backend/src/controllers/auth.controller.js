@@ -2,7 +2,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { cloudinary } = require('../config/db.cloudinary');
 const fs = require('fs');
-
+const { OAuth2Client } = require("google-auth-library");
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const userRepository = require('../repositories/auth.repositories');
 const { successResponse, errorResponse } = require('../utils/baseResponse');
 
@@ -157,7 +158,7 @@ async function deleteUser(req, res) {
 }
 
 async function updatePhoto(req, res) {
-    const  id  = req.user.id;
+    const id = req.user.id;
     try {
         if (!req.file) {
             return errorResponse(res, 400, 'No file uploaded');
@@ -178,6 +179,76 @@ async function updatePhoto(req, res) {
     }
 }
 
+async function handleGoogleResponse(req, res) {
+    try {
+        const { google_token } = req.body;
+        const ticket = await googleClient.verifyIdToken({
+            idToken: google_token,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+        const payload = ticket.getPayload();
+        const email = payload.email;
+
+        const user = await userRepository.getUserByEmail(email);
+        if (!user) {
+            return successResponse(res, 200, "User not found", null);
+        } else {
+            console.log("Google user found:", user.email);
+            const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES });
+            return successResponse(res, 200, "User found", { token, user: { id: user.id, name: user.name, email: user.email, school_id: user.school_id, username: user.username, role: user.role } });
+        }
+    } catch (error) {
+        console.error("Error handling Google response:", error);
+        return null;
+    }
+}
+
+async function registerUserWithGoogle(req, res) {
+    try {
+        const { google_token, school_id, username } = req.body;
+
+        if (!google_token) {
+            return errorResponse(res, 400, "Google token is required");
+        }
+
+        const ticket = await googleClient.verifyIdToken({
+            idToken: google_token,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+
+        const payload = ticket.getPayload();
+
+        const email = payload.email;
+        const name = payload.name;
+        const google_id = payload.sub;
+
+        if (!email) {
+            return errorResponse(res, 400, "Failed to extract Google account email");
+        }
+
+        const existingUser = await userRepository.getUserByEmail(email);
+
+        if (existingUser) {
+            return errorResponse(res, 400, "User already registered with Google");
+        }
+
+        const user = await userRepository.addUserByGoogle({
+            name,
+            email,
+            username,
+            school_id,
+            google_id,
+            password: null,
+        });
+        const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES });
+
+        return successResponse(res, 201, "Google user registered successfully", { token, user: { id: user.id, name: user.name, email: user.email, school_id: user.school_id, username: user.username, role: user.role } });
+    } catch (error) {
+        console.error("Google Register Error:", error.message);
+        return errorResponse(res, 500, "Failed to register Google user", error.message);
+    }
+}
+
 module.exports = {
     getAllUsers,
     getUserByUsername,
@@ -188,5 +259,7 @@ module.exports = {
     changePassword,
     updateUserRole,
     deleteUser,
-    updatePhoto
+    updatePhoto,
+    handleGoogleResponse,
+    registerUserWithGoogle,
 };
