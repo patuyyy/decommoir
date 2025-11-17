@@ -1,6 +1,6 @@
 import React from 'react';
 import { FaRegUserCircle, FaBell, FaInfo, FaExpand } from "react-icons/fa";
-import DeviceCard from '../components/home_components/DeviceCard';
+import DeviceCard from '../components/app_components/DeviceCard';
 
 const dummyDevices = [
   {

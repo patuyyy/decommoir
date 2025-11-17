@@ -1,6 +1,7 @@
 import sample1 from "../../assets/home3.png";
 import sample2 from "../../assets/home2.png";
 import lines from "../../assets/Lines.svg";
+import { Link } from "react-router-dom"
 
 export default function Home1() {
     return (
@@ -18,14 +19,14 @@ export default function Home1() {
                 <p className="text-sm text-gray-600 mb-6">
                     Sebuah platform digital yang membantu sekolah mengelola distribusi makanan bergizi gratis (MBG) secara transparan dan mengolah sampah organik menggunakan teknologi IoT dan larva BSF.
                 </p>
-                <button className="px-4 py-2 bg-blue-custom text-white rounded-md text-lg">Mulai Sekarang →</button>
+                <Link to='/signup' className="px-4 py-2 bg-blue-custom text-white rounded-md text-lg">Mulai Sekarang →</Link>
             </div>
 
             <div className="relative mt-10 md:mt-0 flex items-center justify-center">
-                <img src={sample1} className="w-96 rounded-md shadow-md rotate-[-2deg]" />
+                <img src={sample1} className=" w-44 md:w-96 hidden md:block rounded-md shadow-md rotate-[-2deg]" />
                 <img
                     src={sample2}
-                    className="w-72 rounded-md shadow-md absolute top-36 left-44 rotate-[6deg]"
+                    className="w-36 md:w-72 rounded-md shadow-md absolute hidden md:block md:top-36 md:left-44 rotate-[6deg]"
                 />
             </div>
         </div>

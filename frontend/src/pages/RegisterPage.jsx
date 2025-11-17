@@ -115,7 +115,7 @@ export default function RegisterPage() {
 
     return (
         <div className="w-full min-h-screen flex bg-gray-100 relative">
-            <img src={logo} alt="Logo" className="absolute top-4 right-4 w-42 md:w-52 z-20" />
+            <img src={logo} alt="Logo" className="absolute hidden md:block top-4 right-4 w-42 md:w-52 z-20" />
 
             <div className="w-full md:w-1/2 flex flex-col justify-center px-10 pt-10 pb-10 lg:px-24">
                 <div className="relative w-fit">
