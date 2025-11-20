@@ -41,7 +41,7 @@ export default function HomeNavbar() {
   const activeClass =
     "text-blue-custom bg-blue-100 px-4 py-2 rounded-md transition-all duration-200";
   const defaultClass =
-    "hover:text-blue-custom hover:bg-blue-100 px-4 py-2 rounded-md transition-all duration-200";
+    "hover:text-blue-custom px-4 py-2 rounded-md transition-all duration-200";
 
   return (
     <nav

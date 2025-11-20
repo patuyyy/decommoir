@@ -1,15 +1,27 @@
-import { FiMonitor } from "react-icons/fi";
+export default function FeatureCard({ title, description, bgImage }) {
+    return (
+        <div
+            className={`
+                w-full h-full rounded-3xl p-8 flex flex-col justify-between
+                ${bgImage ? '' : 'bg-white'}
+            `}
+            style={bgImage ? {
+                backgroundImage: `url(${bgImage})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+            } : {}}
+        >
+            <div className="relative z-10">
+                <h3 className="text-md font-bold mb-2 -mt-5 -ml-3 text-black">{title}</h3>
+                <p className="text-blue-custom text-xl -ml-3 font-semibold">{description}</p>
+            </div>
 
-export default function FeatureCard({ icon: Icon = FiMonitor, title, description }) {
-  return (
-    <div className="bg-[#F5F6FA] backdrop-blur-md rounded-3xl p-8 shadow-lg w-full h-[240px] flex flex-col items-start justify-start transition-all hover:scale-[1.03] hover:shadow-xl cursor-pointer">
-      <Icon size={40} className="text-black mb-4" />
-
-      <h3 className="text-2xl font-bold text-black mb-2">{title}</h3>
-
-      <p className="text-black/80 text-sm leading-relaxed">
-        {description}
-      </p>
-    </div>
-  );
+            <div className="flex justify-end mt-4 relative z-10">
+                <div className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center font-bold">
+                    +
+                </div>
+            </div>
+        </div>
+    );
 }
