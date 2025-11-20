@@ -23,5 +23,11 @@ export default function FeatureCard({ title, description, bgImage }) {
                 </div>
             </div>
         </div>
+
+
+
+
+
+
     );
 }
