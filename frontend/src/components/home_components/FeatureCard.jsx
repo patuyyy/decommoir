@@ -1,10 +1,13 @@
-export default function FeatureCard({ title, description, bgImage }) {
+
+export default function FeatureCard({ onClick, title, description, long_description, bgImage }) {
     return (
         <div
-            className={`
+            onClick={onClick}
+            className="
                 w-full h-full rounded-3xl p-8 flex flex-col justify-between
-                ${bgImage ? '' : 'bg-white'}
-            `}
+                hover:shadow-xl hover:scale-[103%] transition-transform duration-300
+                cursor-pointer relative z-10
+            "
             style={bgImage ? {
                 backgroundImage: `url(${bgImage})`,
                 backgroundSize: "cover",
@@ -13,8 +16,9 @@ export default function FeatureCard({ title, description, bgImage }) {
             } : {}}
         >
             <div className="relative z-10">
-                <h3 className="text-md font-bold mb-2 -mt-5 -ml-3 text-black">{title}</h3>
-                <p className="text-blue-custom text-xl -ml-3 font-semibold">{description}</p>
+                <h3 className="text-md font-semibold mb-1 -mt-3 -ml-3 text-black">{title}</h3>
+                <p className="text-blue-custom text-xl -ml-3 font-bold">{description}</p>
+                <p className="hidden">{long_description}</p>
             </div>
 
             <div className="flex justify-end mt-4 relative z-10">
@@ -23,11 +27,5 @@ export default function FeatureCard({ title, description, bgImage }) {
                 </div>
             </div>
         </div>
-
-
-
-
-
-
     );
 }
