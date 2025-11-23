@@ -82,7 +82,6 @@ async function updateUser(id, data) {
 }
 
 async function updatePassword(id, password) {
-    console.log(password);
     const query = `
     UPDATE users 
     SET password = $1, updated_at = NOW()

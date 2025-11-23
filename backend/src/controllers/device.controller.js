@@ -78,20 +78,6 @@ async function deleteDevice(req, res) {
     }
 }
 
-async function deleteDevice(req, res) {
-    const { id } = req.params;
-    try {
-        const deletedDevice = await deviceRepository.deleteDevice(id);
-        if (deletedDevice) {
-            successResponse(res, 200, 'Device successfully deleted', deletedDevice);
-        } else {
-            errorResponse(res, 404, 'Device not found');
-        }
-    } catch (error) {
-        errorResponse(res, 500, 'Failed to delete device');
-    }
-}
-
 async function maintenanceDevice(req, res) {
     const { device_id } = req.params;
     const user_id  = req.user.id;
