@@ -77,7 +77,7 @@ pipeline {
 
                 docker run -d \
                     --name ${FRONTEND_CONT} \
-                    -p 5173:5173 \
+                    -p 5173:80 \
                     ${FRONTEND_IMAGE}:${IMAGE_TAG}
                 """
             }
