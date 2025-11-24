@@ -25,6 +25,7 @@ pipeline {
         stage('Create Backend .env') {
             steps {
                 withCredentials([file(credentialsId: 'decommoir_backend_env', variable: 'BACKEND_SECRET_ENV')]) {
+                    sh 'rm -f $BACKEND_ENV_PATH'
                     sh "cp $BACKEND_SECRET_ENV ${BACKEND_ENV_PATH}"
                 }
             }
@@ -33,7 +34,9 @@ pipeline {
         stage('Create Frontend .env') {
             steps {
                 withCredentials([file(credentialsId: 'decommoir_frontend_env', variable: 'FRONTEND_SECRET_ENV')]) {
+                    sh 'rm -f $FRONTEND_ENV_PATH'
                     sh "cp $FRONTEND_SECRET_ENV ${FRONTEND_ENV_PATH}"
+                    sh 'cat $FRONTEND_ENV_PATH'
                 }
             }
         }
@@ -77,7 +80,6 @@ pipeline {
 
                 docker run -d \
                     --name ${FRONTEND_CONT} \
-                    --env-file ${FRONTEND_ENV_PATH} \
                     -p 5173:80 \
                     ${FRONTEND_IMAGE}:${IMAGE_TAG}
                 """
