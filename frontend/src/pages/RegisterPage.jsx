@@ -106,7 +106,7 @@ export default function RegisterPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const [isOpen, setIsOpen] = useState(false);
 
-    const filteredSchools = schools.filter(school =>
+    const filteredSchools = (schools || []).filter(school =>
         school.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 

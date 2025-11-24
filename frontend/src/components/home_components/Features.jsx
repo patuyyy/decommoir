@@ -112,6 +112,78 @@ export default function Home2() {
                             })}
                         />
                     </div>
+                    <div className="max-w-[348px] h-[686px] relative">
+                        <FeatureCard
+                            title="Real-time Monitoring"
+                            description="Memantau dengan berbagai sensor secara langsung dengan sensor IoT"
+                            bgImage={rt}
+                            onClick={() => setSelectedFeature({
+                                title: "Real-time Monitoring",
+                                description: "Memantau dengan berbagai sensor secara langsung dengan sensor IoT",
+                                long_description: "Sistem kami didukung oleh integrasi IoT real-time yang memastikan setiap kondisi lingkungan budidaya maggot dapat dipantau secara akurat. Sensor DHT mengirimkan data suhu dan kelembaban, sementara sensor gas/amonia mendeteksi kadar amonia di dalam area budidaya. Seluruh data penting ini dikirim secara otomatis dan terus-menerus ke server, sehingga pengguna dapat mengetahui perubahan kondisi lingkungan kapan pun dibutuhkan. Dengan pemantauan ini, kesehatan maggot tetap terjaga, risiko stres pada maggot dapat dikurangi, dan proses budidaya berlangsung lebih optimal dan efisien.",
+                            })}
+                        />
+                    </div>
+                    <div className="max-w-[348px] h-[686px] relative">
+                        <FeatureCard
+                            title="AI Classification"
+                            description="Teknologi pengenalan citra untuk mengklasifikasi jenis makanan sisa dan mengoptimalkan pengolahan"
+                            bgImage={ai}
+                            onClick={() => setSelectedFeature({
+                                title: "AI Classification",
+                                description: "Teknologi pengenalan citra untuk mengklasifikasi jenis makanan sisa dan mengoptimalkan pengolahan",
+                                long_description: "Teknologi pengenalan citra digunakan untuk mengidentifikasi dan mengklasifikasi berbagai jenis sisa makanan secara otomatis. Kamera atau modul pengambil gambar menangkap foto bahan sisa, kemudian model vision menganalisis ciri visualnya untuk menentukan kategori seperti sayuran, buah, daging, karbohidrat, atau material non-organik. Dengan klasifikasi yang akurat, sistem dapat mengarahkan setiap jenis sisa makanan ke proses pengolahan yang paling sesuai sehingga pengomposan, fermentasi, atau pemrosesan lainnya menjadi lebih efisien. Pendekatan ini membantu mengurangi kesalahan sortasi manual, meningkatkan kualitas hasil pengolahan, dan memastikan setiap jenis limbah organik ditangani sesuai karakteristiknya.",
+                            })}
+                        />
+                    </div>
+                    <div className="max-w-[348px] h-[686px] relative">
+                        <FeatureCard
+                            title="Data Analytics"
+                            description="Visualisasi dan analisis statistik untuk evaluasi Program MBG dan efektivitas pengolahan sampah"
+                            bgImage={dataAnalytics}
+                            onClick={() => setSelectedFeature({
+                                title: "Data Analytics",
+                                description: "Visualisasi dan analisis statistik untuk evaluasi Program MBG dan efektivitas pengolahan sampah",
+                                long_description: "Data analytics digunakan untuk memvisualisasikan dan menganalisis berbagai data operasional, termasuk performa Program MBG dan efektivitas proses pengolahan sampah. Melalui grafik, metrik, serta analisis statistik, sistem ini membantu mengungkap pola, tren, dan anomali sehingga proses pengambilan keputusan dapat dilakukan secara lebih tepat dan berbasis data. Pendekatan ini memastikan setiap kebijakan dan perbaikan dalam program pengelolaan sampah dapat dievaluasi secara objektif dan berkelanjutan.",
+                            })}
+                        />
+                    </div>
+                    <div className="max-w-[348px] h-[686px] relative">
+                        <FeatureCard
+                            title="Real-time Monitoring"
+                            description="Memantau dengan berbagai sensor secara langsung dengan sensor IoT"
+                            bgImage={rt}
+                            onClick={() => setSelectedFeature({
+                                title: "Real-time Monitoring",
+                                description: "Memantau dengan berbagai sensor secara langsung dengan sensor IoT",
+                                long_description: "Sistem kami didukung oleh integrasi IoT real-time yang memastikan setiap kondisi lingkungan budidaya maggot dapat dipantau secara akurat. Sensor DHT mengirimkan data suhu dan kelembaban, sementara sensor gas/amonia mendeteksi kadar amonia di dalam area budidaya. Seluruh data penting ini dikirim secara otomatis dan terus-menerus ke server, sehingga pengguna dapat mengetahui perubahan kondisi lingkungan kapan pun dibutuhkan. Dengan pemantauan ini, kesehatan maggot tetap terjaga, risiko stres pada maggot dapat dikurangi, dan proses budidaya berlangsung lebih optimal dan efisien.",
+                            })}
+                        />
+                    </div>
+                    <div className="max-w-[348px] h-[686px] relative">
+                        <FeatureCard
+                            title="AI Classification"
+                            description="Teknologi pengenalan citra untuk mengklasifikasi jenis makanan sisa dan mengoptimalkan pengolahan"
+                            bgImage={ai}
+                            onClick={() => setSelectedFeature({
+                                title: "AI Classification",
+                                description: "Teknologi pengenalan citra untuk mengklasifikasi jenis makanan sisa dan mengoptimalkan pengolahan",
+                                long_description: "Teknologi pengenalan citra digunakan untuk mengidentifikasi dan mengklasifikasi berbagai jenis sisa makanan secara otomatis. Kamera atau modul pengambil gambar menangkap foto bahan sisa, kemudian model vision menganalisis ciri visualnya untuk menentukan kategori seperti sayuran, buah, daging, karbohidrat, atau material non-organik. Dengan klasifikasi yang akurat, sistem dapat mengarahkan setiap jenis sisa makanan ke proses pengolahan yang paling sesuai sehingga pengomposan, fermentasi, atau pemrosesan lainnya menjadi lebih efisien. Pendekatan ini membantu mengurangi kesalahan sortasi manual, meningkatkan kualitas hasil pengolahan, dan memastikan setiap jenis limbah organik ditangani sesuai karakteristiknya.",
+                            })}
+                        />
+                    </div>
+                    <div className="max-w-[348px] h-[686px] relative">
+                        <FeatureCard
+                            title="Data Analytics"
+                            description="Visualisasi dan analisis statistik untuk evaluasi Program MBG dan efektivitas pengolahan sampah"
+                            bgImage={dataAnalytics}
+                            onClick={() => setSelectedFeature({
+                                title: "Data Analytics",
+                                description: "Visualisasi dan analisis statistik untuk evaluasi Program MBG dan efektivitas pengolahan sampah",
+                                long_description: "Data analytics digunakan untuk memvisualisasikan dan menganalisis berbagai data operasional, termasuk performa Program MBG dan efektivitas proses pengolahan sampah. Melalui grafik, metrik, serta analisis statistik, sistem ini membantu mengungkap pola, tren, dan anomali sehingga proses pengambilan keputusan dapat dilakukan secara lebih tepat dan berbasis data. Pendekatan ini memastikan setiap kebijakan dan perbaikan dalam program pengelolaan sampah dapat dievaluasi secara objektif dan berkelanjutan.",
+                            })}
+                        />
+                    </div>
                 </div>
             </div>
             <div className="flex gap-4 mt-4 mr-8">

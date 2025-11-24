@@ -2,12 +2,17 @@ pipeline {
     agent { label 'docker' }
 
     environment {
-        IMAGE_BASE_NAME = "patuyyy/decommoir-backend" 
-        CONTAINER_NAME = "decommoir_backend"
+        BACKEND_IMAGE   = "patuyyy/decommoir-backend"
+        BACKEND_CONT    = "decommoir_backend"
+
+        FRONTEND_IMAGE  = "patuyyy/decommoir-frontend"
+        FRONTEND_CONT   = "decommoir_frontend"
+
         EXPRESS_ENV = credentials('decommoir_backend_env')
         IMAGE_TAG = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
         
-        ENV_FILE_PATH = "${WORKSPACE}/backend/.env"
+        BACKEND_ENV_PATH = "${WORKSPACE}/backend/.env"
+        FRONTEND_ENV_PATH = "${WORKSPACE}/frontend/.env"
     }
 
     stages {
@@ -17,47 +22,78 @@ pipeline {
             }
         }
 
-        stage('Create .env (on Host)') {
+        stage('Create Backend .env') {
             steps {
-                withCredentials([file(credentialsId: 'decommoir_backend_env', variable: 'SECRET_ENV_FILE')]) {
-                    
-                    sh "cp $SECRET_ENV_FILE ${ENV_FILE_PATH}"
+                withCredentials([file(credentialsId: 'decommoir_backend_env', variable: 'BACKEND_SECRET_ENV')]) {
+                    sh 'rm -f $BACKEND_ENV_PATH'
+                    sh "cp $BACKEND_SECRET_ENV ${BACKEND_ENV_PATH}"
                 }
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Create Frontend .env') {
+            steps {
+                withCredentials([file(credentialsId: 'decommoir_frontend_env', variable: 'FRONTEND_SECRET_ENV')]) {
+                    sh 'rm -f $FRONTEND_ENV_PATH'
+                    sh "cp $FRONTEND_SECRET_ENV ${FRONTEND_ENV_PATH}"
+                    sh 'cat $FRONTEND_ENV_PATH'
+                }
+            }
+        }
+
+        stage('Build Backend Image') {
             steps {
                 dir('backend') {
-                    sh 'docker build -t ${IMAGE_BASE_NAME}:${IMAGE_TAG} .'
-                    sh 'docker tag ${IMAGE_BASE_NAME}:${IMAGE_TAG} ${IMAGE_BASE_NAME}:latest'
+                    sh 'docker build -t ${BACKEND_IMAGE}:${IMAGE_TAG} .'
+                    sh 'docker tag ${BACKEND_IMAGE}:${IMAGE_TAG} ${BACKEND_IMAGE}:latest'
                 }
             }
         }
 
-        stage('Deploy Container') {
+        stage('Deploy Backend') {
             steps {
                 sh """
-                # Hapus kontainer lama (jika ada)
-                docker rm -f $CONTAINER_NAME || true
-                
-                # Jalankan kontainer baru, merujuk ke path ABSOLUT dari .env di host
-                docker run -d --name $CONTAINER_NAME --env-file ${ENV_FILE_PATH} -p 3000:3000 ${IMAGE_BASE_NAME}:${IMAGE_TAG}
+                docker rm -f ${BACKEND_CONT} || true
+
+                docker run -d \
+                    --name ${BACKEND_CONT} \
+                    --env-file ${BACKEND_ENV_PATH} \
+                    -p 3000:3000 \
+                    ${BACKEND_IMAGE}:${IMAGE_TAG}
+                """
+            }
+        }
+
+        stage('Build Frontend Image') {
+            steps {
+                dir('frontend') {
+                    sh 'docker build -t ${FRONTEND_IMAGE}:${IMAGE_TAG} .'
+                    sh 'docker tag ${FRONTEND_IMAGE}:${IMAGE_TAG} ${FRONTEND_IMAGE}:latest'
+                }
+            }
+        }
+
+        stage('Deploy Frontend') {
+            steps {
+                sh """
+                docker rm -f ${FRONTEND_CONT} || true
+
+                docker run -d \
+                    --name ${FRONTEND_CONT} \
+                    -p 5173:80 \
+                    ${FRONTEND_IMAGE}:${IMAGE_TAG}
                 """
             }
         }
     }
     post {
         success {
-            echo "Success! Deployed ${IMAGE_BASE_NAME}:${IMAGE_TAG}"
+            echo "Success! Deployed ${BACKEND_IMAGE}:${IMAGE_TAG} and ${FRONTEND_IMAGE}:${IMAGE_TAG}"
         }
         failure {
-            echo "Failed to deploy backend."
+            echo "Failed to deploy."
         }
-        always {
-            // echo "Cleaning up .env file..."
-            // sh 'rm -f ${ENV_FILE_PATH}'
-            
+        always {           
             sh 'docker image prune -f'
         }
     }
