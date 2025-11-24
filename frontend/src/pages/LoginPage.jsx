@@ -63,11 +63,41 @@ export default function LoginPage() {
             });
 
             window.google.accounts.id.renderButton(
+                document.getElementById("googleSignInDivMd"),
+                {
+                    theme: "outline",
+                    size: "large",
+                    width: "500",
+                    shape: "pill",
+                }
+            );
+        };
+
+        if (window.google) {
+            start();
+        } else {
+            const interval = setInterval(() => {
+                if (window.google) {
+                    start();
+                    clearInterval(interval);
+                }
+            }, 100);
+        }
+    }, []);
+
+    useEffect(() => {
+        const start = () => {
+            window.google.accounts.id.initialize({
+                client_id: CLIENT_ID,
+                callback: handleGoogleResponse,
+            });
+
+            window.google.accounts.id.renderButton(
                 document.getElementById("googleSignInDiv"),
                 {
                     theme: "outline",
                     size: "large",
-                    width: 450,
+                    width: 300,
                     shape: "pill",
                 }
             );
@@ -87,7 +117,7 @@ export default function LoginPage() {
 
     return (
         <div className="w-full min-h-screen flex bg-gray-100 relative">
-            <img src={logo} alt="Logo" className="absolute top-4 left-4 w-42 md:w-52 z-20" />
+            <img src={logo} alt="Logo" className="absolute hidden md:block top-4 left-4 w-42 md:w-52 z-20" />
 
             <div className="hidden md:block w-1/2 relative bg-black">
                 <img src={bgImage} alt="Background" className="w-full h-full object-cover opacity-70" />
@@ -137,7 +167,10 @@ export default function LoginPage() {
                     <span className="text-sm text-gray-500">atau</span>
                     <div className="border-t border-gray-300 w-full" />
                 </div>
-                <div className="w-full flex justify-center" id="googleWrapper">
+                <div className="w-full hidden md:flex justify-center" id="googleWrapper">
+                    <div id="googleSignInDivMd"></div>
+                </div>
+                <div className="w-full flex md:hidden justify-center" id="googleWrapper">
                     <div id="googleSignInDiv"></div>
                 </div>
                 <p className="text-center mt-6 text-gray-600">

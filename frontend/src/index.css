@@ -1,3 +1,39 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.no-scrollbar::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none; 
+}
+
+@keyframes fadeIn {
+  from { opacity: 0 }
+  to { opacity: 1 }
+}
+.animate-fadeIn {
+  animation: fadeIn .2s ease-out;
+}
+
+@keyframes scaleIn {
+  from { transform: scale(.9); opacity: 0 }
+  to { transform: scale(1); opacity: 1 }
+}
+.animate-scaleIn {
+  animation: scaleIn .25s ease-out;
+}
+
+/* tambah di global CSS (index.css) */
+@keyframes modalOut {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.95); }
+}
+
+.modal-out {
+  animation: modalOut 0.2s ease forwards;
+}
