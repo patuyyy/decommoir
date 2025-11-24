@@ -77,6 +77,7 @@ pipeline {
 
                 docker run -d \
                     --name ${FRONTEND_CONT} \
+                    --env-file ${FRONTEND_ENV_PATH} \
                     -p 5173:80 \
                     ${FRONTEND_IMAGE}:${IMAGE_TAG}
                 """
