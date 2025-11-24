@@ -18,6 +18,11 @@ export default function LoginPage() {
     const { login, checkGoogleUserContext, setGoogleAuthToken } = useAuth();
     const navigate = useNavigate();
     const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    const [errors, setErrors] = useState({
+        identifier: false,
+        password: false,
+    });
+
 
     function handleGoogleResponse(response) {
         const token = response.credential;
@@ -42,6 +47,15 @@ export default function LoginPage() {
 
     const handleLogin = async () => {
         setError("");
+        const newErrors = {
+            identifier: form.identifier.trim() === "",
+            password: form.password.trim() === "",
+        };
+        setErrors(newErrors);
+        if (newErrors.identifier || newErrors.password) {
+            return;
+        }
+
         try {
             const result = await login(form);
             navigate("/dashboard");
@@ -52,6 +66,12 @@ export default function LoginPage() {
             } else {
                 setError("Terjadi kesalahan saat login. Silakan coba lagi.");
             }
+        }
+    };
+
+    const handleKeyPressed = (event) => {
+        if (event.key === "Enter") {
+            handleLogin();
         }
     };
 
@@ -137,14 +157,35 @@ export default function LoginPage() {
                     <label className="ml-3 font-semibold">Email / Username</label>
                     <div className="relative shadow-md rounded-xl">
                         <FaUser size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
-                        <input type="email" placeholder="" value={form.identifier} onChange={(e) => setForm({ ...form, identifier: e.target.value })} className="w-full pl-10 pr-4 py-3 rounded-xl bg-white shadow-sm border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        <input
+                            type="email"
+                            onKeyDown={handleKeyPressed}
+                            className={`w-full pl-10 pr-4 py-3 rounded-xl bg-white shadow-sm border 
+                            ${errors.identifier ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:ring-blue-500"}`}
+                            value={form.identifier}
+                            onChange={(e) => {
+                                setForm({ ...form, identifier: e.target.value });
+                                setErrors({ ...errors, identifier: false });
+                            }}
+                        />
+
                     </div>
                     <label className="ml-3 font-semibold">Password</label>
                     <div className="relative shadow-md rounded-xl">
                         <MdLockOutline size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
-                        <input type={showPassword ? "text" : "password"} placeholder="" className="w-full pl-10 pr-10 px-4 py-3 rounded-xl bg-white shadow-sm" onChange={(e) => setForm({ ...form, password: e.target.value })}/>
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            onKeyDown={handleKeyPressed}
+                            className={`w-full pl-10 pr-10 py-3 rounded-xl bg-white shadow-sm border 
+                            ${errors.password ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:ring-blue-500"}`}
+                            onChange={(e) => {
+                                setForm({ ...form, password: e.target.value });
+                                setErrors({ ...errors, password: false });
+                            }}
+                        />
                         <button
                             type="button"
+                            tabIndex={-1}
                             onClick={() => setShowPassword(!showPassword)}
                             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-black"
                         >

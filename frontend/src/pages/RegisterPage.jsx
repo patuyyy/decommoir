@@ -18,6 +18,10 @@ export default function RegisterPage() {
     const { googleToken, setGoogleAuthToken, checkGoogleUserContext } = useAuth();
     const [schools, setSchools] = useState([]);
     const navigate = useNavigate();
+    const [errors, setErrors] = useState({
+        identifier: false,
+        password: false,
+    });
 
     const [form, setForm] = useState({
         name: "",
@@ -76,6 +80,16 @@ export default function RegisterPage() {
     }, []);
 
     const handleRegister = async () => {
+        setError("");
+        const newErrors = {
+            identifier: form.identifier.trim() === "",
+            password: form.password.trim() === "",
+        };
+        setErrors(newErrors);
+        if (newErrors.identifier || newErrors.password) {
+            return;
+        }
+
         if (form.password !== confirmPassword) {
             alert("Password tidak sama!");
             return;
@@ -87,6 +101,12 @@ export default function RegisterPage() {
             navigate("/login");
         } catch (error) {
             console.error(error);
+        }
+    };
+
+    const handleKeyPressed = (event) => {
+        if (event.key === "Enter") {
+            handleLogin();
         }
     };
 
@@ -130,19 +150,43 @@ export default function RegisterPage() {
                     <p className="ml-3 mb-1 font-semibold">Nama Lengkap</p>
                     <div className="relative">
                         <FaUser className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
-                        <input type="text" placeholder="" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full pl-10 px-4 py-3 rounded-xl bg-white shadow-sm" />
+                        <input
+                            type="text"
+                            placeholder=""
+                            value={form.name}
+                            onKeyDown={handleKeyPressed}
+                            onChange={(e) => setForm({ ...form, name: e.target.value })}
+                            className={`w-full pl-10 pr-10 py-3 rounded-xl bg-white shadow-sm border 
+                            ${errors.password ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:ring-blue-500"}`}
+                        />
                     </div>
 
                     <p className="ml-3 -mb-3 font-semibold">Username</p>
                     <div className="relative">
                         <FaUserEdit size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
-                        <input type="text" placeholder="" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} className="w-full pl-10 px-4 py-3 rounded-xl bg-white shadow-sm" />
+                        <input
+                            type="text"
+                            placeholder=""
+                            value={form.username}
+                            onKeyDown={handleKeyPressed}
+                            onChange={(e) => setForm({ ...form, username: e.target.value })}
+                            className={`w-full pl-10 pr-10 py-3 rounded-xl bg-white shadow-sm border 
+                            ${errors.password ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:ring-blue-500"}`}
+                        />
                     </div>
 
                     <p className="ml-3 -mb-3 font-semibold">Email</p>
                     <div className="relative">
                         <CiMail size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
-                        <input type="email" placeholder="" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full pl-10 px-4 py-3 rounded-xl bg-white shadow-sm" />
+                        <input
+                            type="email"
+                            placeholder=""
+                            value={form.email}
+                            onKeyDown={handleKeyPressed}
+                            onChange={(e) => setForm({ ...form, email: e.target.value })}
+                            className={`w-full pl-10 pr-10 py-3 rounded-xl bg-white shadow-sm border 
+                            ${errors.password ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:ring-blue-500"}`}
+                        />
                     </div>
 
                     <p className="ml-3 -mb-3 font-semibold">Organisasi / Sekolah</p>
@@ -155,7 +199,9 @@ export default function RegisterPage() {
                             onChange={(e) => setSearchTerm(e.target.value)}
                             onFocus={() => setIsOpen(true)}
                             onBlur={() => setTimeout(() => setIsOpen(false), 200)}
-                            className="w-full pl-10 px-4 py-3 rounded-xl bg-white shadow-sm"
+                            onKeyDown={handleKeyPressed}
+                            className={`w-full pl-10 pr-10 py-3 rounded-xl bg-white shadow-sm border 
+                            ${errors.password ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:ring-blue-500"}`}
                         />
                         {isOpen && (
                             <div className="absolute z-10 w-full mt-1 bg-white rounded-xl shadow-lg max-h-48 overflow-y-auto">
@@ -168,6 +214,7 @@ export default function RegisterPage() {
                                                 setForm({ ...form, school_id: school.id });
                                                 setIsOpen(false);
                                             }}
+                                            onKeyDown={handleKeyPressed}
                                             className="px-4 py-3 hover:bg-gray-100 cursor-pointer"
                                         >
                                             {school.name}
@@ -186,12 +233,16 @@ export default function RegisterPage() {
                         <input
                             type={showPassword ? "text" : "password"}
                             placeholder=""
-                            className="w-full pl-10 pr-10 px-4 py-3 rounded-xl bg-white shadow-sm"
+                            className={`w-full pl-10 pr-10 py-3 rounded-xl bg-white shadow-sm border 
+                            ${errors.password ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:ring-blue-500"}`}
+                            onKeyDown={handleKeyPressed}
                             onChange={(e) => setForm({ ...form, password: e.target.value })}
                         />
                         <button
                             type="button"
+                            tabIndex={-1}
                             onClick={() => setShowPassword(!showPassword)}
+                            onKeyDown={handleKeyPressed}
                             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-black"
                         >
                             {showPassword ? (
@@ -209,10 +260,12 @@ export default function RegisterPage() {
                             placeholder=""
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
+                            onKeyDown={handleKeyPressed}
                             className="w-full pl-10 pr-10 px-4 py-3 rounded-xl bg-white shadow-sm"
                         />
                         <button
                             type="button"
+                            tabIndex={-1}
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-black"
                         >

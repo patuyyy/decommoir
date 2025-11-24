@@ -20,6 +20,7 @@ export default function Sidebar() {
 
     const handleLogout = () => {
         logout();
+        localStorage.removeItem("user");
         navigate("/login"); 
     };
 
