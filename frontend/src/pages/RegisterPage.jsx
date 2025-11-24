@@ -19,8 +19,12 @@ export default function RegisterPage() {
     const [schools, setSchools] = useState([]);
     const navigate = useNavigate();
     const [errors, setErrors] = useState({
-        identifier: false,
+        name: false,
+        email: false,
+        username: false,
+        school_id: false,
         password: false,
+        confirmPassword: false,
     });
 
     const [form, setForm] = useState({
@@ -80,15 +84,16 @@ export default function RegisterPage() {
     }, []);
 
     const handleRegister = async () => {
-        setError("");
+        setErrors("");
         const newErrors = {
-            identifier: form.identifier.trim() === "",
+            name: form.name.trim() === "",
+            username: form.username.trim() === "",
+            email: form.email.trim() === "",
+            school_id: form.school_id === "",
             password: form.password.trim() === "",
+            confirmPassword: confirmPassword.trim() === "",
         };
         setErrors(newErrors);
-        if (newErrors.identifier || newErrors.password) {
-            return;
-        }
 
         if (form.password !== confirmPassword) {
             alert("Password tidak sama!");
@@ -155,9 +160,12 @@ export default function RegisterPage() {
                             placeholder=""
                             value={form.name}
                             onKeyDown={handleKeyPressed}
-                            onChange={(e) => setForm({ ...form, name: e.target.value })}
+                            onChange={(e) => {
+                                setForm({ ...form, name: e.target.value });
+                                setErrors({ ...errors, name: false });
+                            }}
                             className={`w-full pl-10 pr-10 py-3 rounded-xl bg-white shadow-sm border 
-                            ${errors.password ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:ring-blue-500"}`}
+                            ${errors.name ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:ring-blue-500"}`}
                         />
                     </div>
 
@@ -169,9 +177,12 @@ export default function RegisterPage() {
                             placeholder=""
                             value={form.username}
                             onKeyDown={handleKeyPressed}
-                            onChange={(e) => setForm({ ...form, username: e.target.value })}
+                            onChange={(e) => {
+                                setForm({ ...form, username: e.target.value });
+                                setErrors({ ...errors, username: false });
+                            }}
                             className={`w-full pl-10 pr-10 py-3 rounded-xl bg-white shadow-sm border 
-                            ${errors.password ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:ring-blue-500"}`}
+                            ${errors.username ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:ring-blue-500"}`}
                         />
                     </div>
 
@@ -183,9 +194,12 @@ export default function RegisterPage() {
                             placeholder=""
                             value={form.email}
                             onKeyDown={handleKeyPressed}
-                            onChange={(e) => setForm({ ...form, email: e.target.value })}
+                            onChange={(e) => {
+                                setForm({ ...form, email: e.target.value });
+                                setErrors({ ...errors, email: false });
+                            }}
                             className={`w-full pl-10 pr-10 py-3 rounded-xl bg-white shadow-sm border 
-                            ${errors.password ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:ring-blue-500"}`}
+                            ${errors.email ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:ring-blue-500"}`}
                         />
                     </div>
 
@@ -201,7 +215,7 @@ export default function RegisterPage() {
                             onBlur={() => setTimeout(() => setIsOpen(false), 200)}
                             onKeyDown={handleKeyPressed}
                             className={`w-full pl-10 pr-10 py-3 rounded-xl bg-white shadow-sm border 
-                            ${errors.password ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:ring-blue-500"}`}
+                            ${errors.school_id ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:ring-blue-500"}`}
                         />
                         {isOpen && (
                             <div className="absolute z-10 w-full mt-1 bg-white rounded-xl shadow-lg max-h-48 overflow-y-auto">
@@ -236,7 +250,10 @@ export default function RegisterPage() {
                             className={`w-full pl-10 pr-10 py-3 rounded-xl bg-white shadow-sm border 
                             ${errors.password ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:ring-blue-500"}`}
                             onKeyDown={handleKeyPressed}
-                            onChange={(e) => setForm({ ...form, password: e.target.value })}
+                            onChange={(e) => {
+                                setForm({ ...form, password: e.target.value });
+                                setErrors({ ...errors, password: false });
+                            }}
                         />
                         <button
                             type="button"
@@ -259,9 +276,13 @@ export default function RegisterPage() {
                             type={showConfirmPassword ? "text" : "password"}
                             placeholder=""
                             value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            onChange={(e) => {
+                                setConfirmPassword(e.target.value);
+                                setErrors({ ...errors, confirmPassword: false });
+                            }}
                             onKeyDown={handleKeyPressed}
-                            className="w-full pl-10 pr-10 px-4 py-3 rounded-xl bg-white shadow-sm"
+                            className={`w-full pl-10 pr-10 py-3 rounded-xl bg-white shadow-sm border 
+                            ${errors.confirmPassword ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:ring-blue-500"}`}
                         />
                         <button
                             type="button"
