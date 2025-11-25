@@ -10,6 +10,7 @@ import DashboardPage from "./pages/DashboardPage";
 import MonitoringPage from "./pages/MonitoringPage";
 import Page404 from "./pages/Page404";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AuthorizedRoute from "./components/AuthorizedRoute";
 import FillSchoolPage from "./pages/FillSchoolPage";
 
 export default function App() {
@@ -18,10 +19,26 @@ export default function App() {
       <Routes>
 
         <Route element={<PublicLayout />}>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<RegisterPage />} />
-          <Route path="/fillschool" element={<FillSchoolPage />} />
+          <Route path="/" element={
+            <AuthorizedRoute>
+              <HomePage />
+            </AuthorizedRoute>
+          } />
+          <Route path="/login" element={
+            <AuthorizedRoute>
+              <LoginPage />
+            </AuthorizedRoute>
+          } />
+          <Route path="/signup" element={
+            <AuthorizedRoute>
+              <RegisterPage />
+            </AuthorizedRoute>
+          } />
+          <Route path="/fillschool" element={
+            <AuthorizedRoute>
+              <FillSchoolPage />
+            </AuthorizedRoute>
+          } />
           <Route path="*" element={<Page404 />} />
         </Route>
 
@@ -34,7 +51,6 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/monitoring"
             element={
@@ -44,7 +60,6 @@ export default function App() {
             }
           />
         </Route>
-
       </Routes>
     </Router>
   );

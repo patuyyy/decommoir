@@ -2,9 +2,10 @@ import FeatureCard from "./FeatureCard";
 import { useState, useRef, useEffect } from "react";
 import { MdMonitor, MdLinkedCamera } from "react-icons/md";
 import { FaChartBar } from "react-icons/fa";
-import rt from "../../assets/rt-feature.svg";
-import ai from "../../assets/ai-feature.svg";
-import dataAnalytics from "../../assets/data-feature.png";
+import rt from "../../assets/new-rt-feature.svg";
+import ai from "../../assets/ai-new-feature.svg";
+import analytics from "../../assets/analytics.svg";
+
 
 export default function Home2() {
     const scrollContainerRef = useRef(null);
@@ -104,7 +105,7 @@ export default function Home2() {
                         <FeatureCard
                             title="Data Analytics"
                             description="Visualisasi dan analisis statistik untuk evaluasi Program MBG dan efektivitas pengolahan sampah"
-                            bgImage={dataAnalytics}
+                            bgImage={analytics}
                             onClick={() => setSelectedFeature({
                                 title: "Data Analytics",
                                 description: "Visualisasi dan analisis statistik untuk evaluasi Program MBG dan efektivitas pengolahan sampah",
@@ -140,7 +141,7 @@ export default function Home2() {
                         <FeatureCard
                             title="Data Analytics"
                             description="Visualisasi dan analisis statistik untuk evaluasi Program MBG dan efektivitas pengolahan sampah"
-                            bgImage={dataAnalytics}
+                            bgImage={analytics}
                             onClick={() => setSelectedFeature({
                                 title: "Data Analytics",
                                 description: "Visualisasi dan analisis statistik untuk evaluasi Program MBG dan efektivitas pengolahan sampah",
@@ -176,7 +177,7 @@ export default function Home2() {
                         <FeatureCard
                             title="Data Analytics"
                             description="Visualisasi dan analisis statistik untuk evaluasi Program MBG dan efektivitas pengolahan sampah"
-                            bgImage={dataAnalytics}
+                            bgImage={analytics}
                             onClick={() => setSelectedFeature({
                                 title: "Data Analytics",
                                 description: "Visualisasi dan analisis statistik untuk evaluasi Program MBG dan efektivitas pengolahan sampah",
