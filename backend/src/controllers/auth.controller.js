@@ -83,7 +83,7 @@ async function loginUser(req, res) {
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
                 secure: true,
-                sameSite: 'Strict',
+                sameSite: 'None',
                 path: '/',
                 maxAge: 30 * 24 * 60 * 60 * 1000,
             });
