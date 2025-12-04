@@ -6,6 +6,7 @@ const { OAuth2Client } = require("google-auth-library");
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const userRepository = require('../repositories/auth.repositories');
 const { successResponse, errorResponse } = require('../utils/baseResponse');
+const path = require('path');
 
 async function getAllUsers(req, res) {
     try {
@@ -76,8 +77,18 @@ async function loginUser(req, res) {
         const passwordMatch = user ? await bcrypt.compare(password, user.password) : false;
 
         if (user && passwordMatch) {
-            const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES });
-            successResponse(res, 200, "Login successful", { token, user: { id: user.id, name: user.name, email: user.email, school_id: user.school_id, username: user.username, role: user.role } });
+            const accessToken = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_ACCESS_SECRET, { expiresIn: process.env.JWT_ACCESS_EXPIRES });
+            const refreshToken = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_REFRESH_SECRET, { expiresIn: process.env.JWT_REFRESH_EXPIRES });
+            
+            res.cookie('refreshToken', refreshToken, {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'Strict',
+                path: '/',
+                maxAge: 30 * 24 * 60 * 60 * 1000,
+            });
+            
+            successResponse(res, 200, "Login successful", { accessToken, user: { id: user.id, name: user.name, email: user.email, school_id: user.school_id, username: user.username, role: user.role } });
         } else {
             errorResponse(res, 401, "Invalid username or password");
         }
