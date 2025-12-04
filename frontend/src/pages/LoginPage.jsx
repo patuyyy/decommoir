@@ -215,7 +215,7 @@ export default function LoginPage() {
                     <div id="googleSignInDiv"></div>
                 </div>
                 <p className="text-center mt-6 text-gray-600">
-                    Tidak memiliki akun? <Link to="/register" className="text-blue-custom font-bold hover:text-blue-700 hover:underline">Daftar Sekarang</Link>
+                    Tidak memiliki akun? <Link to="/signup" className="text-blue-custom font-bold hover:text-blue-700 hover:underline">Daftar Sekarang</Link>
                 </p>
             </div>
             <script src="https://apis.google.com/js/platform.js" async defer></script>

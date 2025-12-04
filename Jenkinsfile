@@ -36,7 +36,6 @@ pipeline {
                 withCredentials([file(credentialsId: 'decommoir_frontend_env', variable: 'FRONTEND_SECRET_ENV')]) {
                     sh 'rm -f $FRONTEND_ENV_PATH'
                     sh "cp $FRONTEND_SECRET_ENV ${FRONTEND_ENV_PATH}"
-                    sh 'cat $FRONTEND_ENV_PATH'
                 }
             }
         }
