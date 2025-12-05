@@ -204,9 +204,8 @@ async function handleGoogleResponse(req, res) {
         if (!user) {
             return successResponse(res, 200, "User not found", null);
         } else {
-            console.log("Google user found:", user.email);
-            const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES });
-            return successResponse(res, 200, "User found", { token, user: { id: user.id, name: user.name, email: user.email, school_id: user.school_id, username: user.username, role: user.role } });
+            const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_ACCESS_SECRET, { expiresIn: process.env.JWT_ACCESS_EXPIRES });
+            return successResponse(res, 200, "User found", { token, user: { id: user.id, name: user.name, email: user.email, school_id: user.school_id, username: user.username, role: user.role, photo_url: user.photo_url } });
         }
     } catch (error) {
         console.error("Error handling Google response:", error);
