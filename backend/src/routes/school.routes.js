@@ -8,7 +8,7 @@ const router = express.Router();
 router.get('/', schoolController.getAllSchools);
 
 // Route untuk mendapatkan sekolah berdasarkan ID
-// router.get('/:id', verifyToken, schoolController.getSchoolById);
+router.get('/:id', schoolController.getSchoolById);
 
 // Route untuk menambahkan sekolah baru
 // router.post('/add', verifyToken, schoolController.addSchool);
