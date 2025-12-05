@@ -15,7 +15,7 @@ require('dotenv').config()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-app.use(cors())
+app.use(cors({ origin: '*' }))
 app.use('/api/auth', authRouter)
 app.use('/api/devices', deviceRouter)
 app.use('/api/schools', schoolRouter)
