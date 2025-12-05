@@ -52,3 +52,23 @@ export const checkGoogleUser = async (google_token) => {
     throw error;
   }
 };
+
+export const logoutUser = async () => {
+  try {
+    const response = await api.post("/api/auth/logout");
+    return response.data;
+  } catch (error) {
+    console.error("Error logging out:", error);
+    throw error;
+  }
+};
+
+export const refreshToken = async () => {
+  try {
+    const response = await api.post("/api/auth/refresh-token");
+    return response.data;
+  } catch (error) {
+    console.error("Error refreshing token:", error);
+    throw error;
+  }
+};
