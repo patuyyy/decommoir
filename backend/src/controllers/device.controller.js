@@ -1,7 +1,4 @@
-const express = require('express');
 require('dotenv').config();
-
-const router = express.Router();
 
 const deviceRepository = require('../repositories/device.repositories');
 const { successResponse, errorResponse } = require('../utils/baseResponse');
