@@ -1,6 +1,7 @@
 import React from 'react';
 import { FaRegUserCircle, FaBell, FaInfo, FaExpand } from "react-icons/fa";
 import DeviceCard from '../components/app_components/DeviceCard';
+import { useNavigate } from 'react-router-dom';
 
 const dummyDevices = [
   {
@@ -42,6 +43,7 @@ const dummyDevices = [
 ];
 
 export default function DashboardPage() {
+  const navigate = useNavigate();
   const savedUser = localStorage.getItem("user");
   const user = savedUser ? JSON.parse(savedUser) : null;
 
@@ -56,7 +58,7 @@ export default function DashboardPage() {
           <button className="text-2xl mt-1 text-gray-500 hover:text-gray-700">
             <FaBell />
           </button>
-          <button className="flex items-center space-x-2 text-3xl text-gray-500 hover:text-gray-700">
+          <button onClick={() => navigate('/profile')} className="flex items-center space-x-2 text-3xl text-gray-500 hover:text-gray-700">
             <span className='text-lg'>{user ? user.name : "Guest"}</span>
             <FaRegUserCircle />
           </button>

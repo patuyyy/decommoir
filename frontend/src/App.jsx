@@ -12,6 +12,7 @@ import Page404 from "./pages/Page404";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AuthorizedRoute from "./components/AuthorizedRoute";
 import FillSchoolPage from "./pages/FillSchoolPage";
+import ProfilePage from "./pages/ProfilePage";
 
 export default function App() {
   return (
@@ -56,6 +57,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <MonitoringPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
               </ProtectedRoute>
             }
           />
