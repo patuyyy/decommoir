@@ -52,7 +52,7 @@ export default function Sidebar() {
             </nav>
 
             <div className="px-4 py-4">
-                <button className="flex items-center rounded-lg px-4 py-3 text-gray-300 hover:bg-gray-700 w-full">
+                <button onClick={handleLogout} className="flex items-center rounded-lg px-4 py-3 text-gray-300 hover:bg-gray-700 w-full">
                     <span className="mr-3 text-xl">
                         <CiLogout />
                     </span>

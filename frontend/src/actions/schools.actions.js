@@ -10,3 +10,12 @@ export const getAllSchools = async () => {
   }
 };
 
+export const getSchoolById = async (id) => {
+  try {
+    const response = await api.get(`/api/schools/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching school with id ${id}:`, error);
+    throw error;
+  }
+};
