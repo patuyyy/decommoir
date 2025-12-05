@@ -13,6 +13,21 @@ async function getAllSchools(req, res) {
     }
 }
 
+const getSchoolById = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const school = await schoolRepository.getSchoolById(id);
+        if (school) {
+            successResponse(res, 200, "School successfully retrieved", school);
+        } else {
+            errorResponse(res, 404, "School not found");
+        }
+    } catch (error) {
+        errorResponse(res, 500, "Failed to retrieve school", error);
+    }
+}
+
 module.exports = {
-    getAllSchools
+    getAllSchools,
+    getSchoolById
 };
