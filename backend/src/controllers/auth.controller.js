@@ -88,7 +88,7 @@ async function loginUser(req, res) {
                 maxAge: 30 * 24 * 60 * 60 * 1000,
             });
             
-            successResponse(res, 200, "Login successful", { accessToken, user: { id: user.id, name: user.name, email: user.email, school_id: user.school_id, username: user.username, role: user.role } });
+            successResponse(res, 200, "Login successful", { accessToken, user: { id: user.id, name: user.name, email: user.email, school_id: user.school_id, username: user.username, role: user.role, photo_url: user.photo_url } });
         } else {
             errorResponse(res, 401, "Invalid username or password");
         }
