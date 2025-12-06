@@ -30,14 +30,13 @@ async function blynkWebhook(req, res) {
 
 async function getLatestSensorData(req, res) {
     try {
-        const [temperature, humidity, switchData] = await Promise.all([
-            SensorData.find({ type: 'temperature' }).sort({ timestamp: -1 }).limit(50),
-            SensorData.find({ type: 'humidity' }).sort({ timestamp: -1 }).limit(50),
-            SensorData.find({ type: 'switch' }).sort({ timestamp: -1 }).limit(50)
+        const [temperature, humidity] = await Promise.all([
+            SensorData.find({ type: 'v1' }).sort({ timestamp: -1 }).limit(50),
+            SensorData.find({ type: 'v2' }).sort({ timestamp: -1 }).limit(50)
         ])
 
         const formatData = arr => arr.map(d => ({ value: d.value, time: d.timestamp.toISOString() })).reverse();
-        res.json({ temperature: formatData(temperature), humidity: formatData(humidity), switch: formatData(switchData) })
+        res.json({ temperature: formatData(temperature), humidity: formatData(humidity) })
 
     } catch (err) {
         res.status(500).json({ error: err.message });
