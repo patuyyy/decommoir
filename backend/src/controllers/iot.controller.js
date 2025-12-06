@@ -6,21 +6,15 @@ require('dotenv').config();
 
 
 async function blynkWebhook(req, res) {
-    const { pin, value } = req.body;
+    const { type, value } = req.body;
     try {
-        let type;
-        if (pin === "V0") type = "temperature";
-        else if (pin === "V1") type = "humidity";
-        else if (pin === "V2") type = "switch";
 
-        const formattedValue = (type === "switch") ? Boolean(Number(value)) : Number(value);
-
-        const sensor = await SensorData.create({ type, value: formattedValue })
+        const sensor = await SensorData.create({ type, value })
 
 
         await SensorData.create({
             type,
-            value: formattedValue
+            value
         });
         req.app.locals.broadcast({
             type: sensor.type,

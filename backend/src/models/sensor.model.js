@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const SensorSchema = new mongoose.Schema({
-  pin: { type: String, required: true },
-  value: mongoose.Schema.Types.Mixed,
+  type: { type: String, required: true },
+  value: mongoose.Schema.Types.Mixed, // number atau boolean
   timestamp: { type: Date, default: Date.now }
 });
 
