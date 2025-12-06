@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       const result = await loginUser(credentials);
-      const token = result.data.token;
+      const token = result.data.accessToken;
       const user = result.data.user;
 
       localStorage.setItem("user", JSON.stringify(user));
@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const result = await checkGoogleUser(google_token);
       if (result.data.data != null) {
-        const token = result.data.data.token;
+        const token = result.data.data.accessToken;
         const user = result.data.data.user;
         setToken(token);
         setUser(user);

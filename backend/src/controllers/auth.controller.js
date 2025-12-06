@@ -252,7 +252,7 @@ async function registerUserWithGoogle(req, res) {
         });
         const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_ACCESS_SECRET, { expiresIn: process.env.JWT_ACCESS_EXPIRES });
 
-        return successResponse(res, 201, "Google user registered successfully", { token, user: { id: user.id, name: user.name, email: user.email, school_id: user.school_id, username: user.username, role: user.role } });
+        return successResponse(res, 201, "Google user registered successfully", { accessToken: token, user: { id: user.id, name: user.name, email: user.email, school_id: user.school_id, username: user.username, role: user.role } });
     } catch (error) {
         console.error("Google Register Error:", error.message);
         return errorResponse(res, 500, "Failed to register Google user", error.message);
