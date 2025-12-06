@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>WebSocket Test</title>
+</head>
+<body>
+  <h1>WebSocket Test</h1>
+  <script>
+    let ws = new WebSocket("wss://be.decommoir.online");
+
+    ws.onopen = () => console.log("WebSocket connected!");
+    ws.onmessage = (event) => console.log("Received:", event.data);
+    ws.onclose = () => console.log("WebSocket disconnected");
+    ws.onerror = (err) => console.log("WebSocket error:", err);
+  </script>
+</body>
+</html>
+

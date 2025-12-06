@@ -1,33 +1,59 @@
-const express = require('express')
-const bodyParser = require('body-parser')
-const cors = require('cors')
-const mongoose = require('mongoose')
+const express = require('express');
+const cors = require('cors');
+const mongoose = require('mongoose');
+const http = require('http');             
+const { WebSocketServer } = require('ws');
 
-const authRouter = require('./routes/auth.routes')
-const deviceRouter = require('./routes/device.routes')
-const schoolRouter = require('./routes/school.routes')
-const iotRouter = require('./routes/iot.routes')
+require('dotenv').config();
 
-const app = express()
+const authRouter = require('./routes/auth.routes');
+const deviceRouter = require('./routes/device.routes');
+const schoolRouter = require('./routes/school.routes');
+const iotRouter = require('./routes/iot.routes');
 
-require('dotenv').config()
+const app = express();
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors({
+    origin: '*',
+}));
 
-app.use(cors({ origin: '*' }))
-app.use('/api/auth', authRouter)
-app.use('/api/devices', deviceRouter)
-app.use('/api/schools', schoolRouter)
-app.use('/api/iot', iotRouter)
+app.use('/api/auth', authRouter);
+app.use('/api/devices', deviceRouter);
+app.use('/api/schools', schoolRouter);
+app.use('/api/iot', iotRouter);
 
-const MONGODB_URI = process.env.MONGODB_URI;
+mongoose.connect(process.env.MONGODB_URI)
+    .then(() => console.log("MongoDB connected"))
+    .catch(err => console.error("MongoDB connection error:", err));
 
-// Connect ke MongoDB
-mongoose.connect(MONGODB_URI).then(() => console.log("MongoDB connected")).catch(err => console.error("MongoDB connection error:", err));
+const server = http.createServer(app);
 
-app.listen(process.env.PORT, '0.0.0.0', () => {
-    console.log(`Server running at http://localhost:${process.env.PORT}`);
-})
+const wss = new WebSocketServer({ server });
 
-module.exports = app
+console.log("WebSocket initialized...");
+
+app.locals.broadcast = (data) => {
+    const payload = JSON.stringify(data);
+
+    wss.clients.forEach(client => {
+        if (client.readyState === 1) {
+            client.send(payload);
+        }
+    });
+};
+
+wss.on('connection', (ws) => {
+    console.log('WS client connected');
+
+    ws.send(JSON.stringify({ message: "Connected to WebSocket" }));
+});
+
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, '0.0.0.0', () => {
+    console.log(`HTTP + WebSocket running at http://localhost:${PORT}`);
+});
+
+module.exports = app;
