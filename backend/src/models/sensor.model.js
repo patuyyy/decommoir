@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const SensorSchema = new mongoose.Schema({
-  type: { type: String, enum: ['temperature', 'humidity', 'switch'], required: true },
+  type: { type: String, required: true },
   value: mongoose.Schema.Types.Mixed, // number atau boolean
   timestamp: { type: Date, default: Date.now }
 });
