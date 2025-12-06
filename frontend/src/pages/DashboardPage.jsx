@@ -55,9 +55,6 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
           <p className="text-lg text-gray-600">Welcome, {user ? user.name : "Guest"}!</p>
-          <p className={`text-sm ${connectionStatus === 'Connected' ? 'text-green-600' : 'text-red-600'}`}>
-            WS Status: {connectionStatus}
-          </p>
         </div>
         <div className="flex items-center space-x-5">
           <button className="text-2xl mt-1 text-gray-500 hover:text-gray-700">
