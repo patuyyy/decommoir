@@ -7,7 +7,7 @@
 <body>
   <h1>WebSocket Test</h1>
   <script>
-    let ws = new WebSocket("ws://localhost:8080");
+    let ws = new WebSocket("ws://be.decommoir.online:8080");
 
     ws.onopen = () => console.log("WebSocket connected!");
     ws.onmessage = (event) => console.log("Received:", event.data);
