@@ -13,9 +13,12 @@ const app = express()
 require('dotenv').config()
 
 app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+app.use(express.urlencoded({
+    extended: true,
+    credentials: true
+}))
 
-app.use(cors({ origin: '*' }))
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }))
 app.use('/api/auth', authRouter)
 app.use('/api/devices', deviceRouter)
 app.use('/api/schools', schoolRouter)
@@ -25,6 +28,18 @@ const MONGODB_URI = process.env.MONGODB_URI;
 
 // Connect ke MongoDB
 mongoose.connect(MONGODB_URI).then(() => console.log("MongoDB connected")).catch(err => console.error("MongoDB connection error:", err));
+
+// WebSocket
+const { WebSocketServer } = require('ws')
+const wss = new WebSocketServer({ port: 8080 })
+console.log("WebSocket running on ws://localhost:8080")
+
+// Fungsi broadcast
+app.locals.broadcast = (data) => {
+  wss.clients.forEach(client => {
+    if (client.readyState === 1) client.send(JSON.stringify(data))
+  })
+} 
 
 app.listen(process.env.PORT, '0.0.0.0', () => {
     console.log(`Server running at http://localhost:${process.env.PORT}`);

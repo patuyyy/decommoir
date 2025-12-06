@@ -250,7 +250,7 @@ async function registerUserWithGoogle(req, res) {
             google_id,
             password: null,
         });
-        const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES });
+        const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_ACCESS_SECRET, { expiresIn: process.env.JWT_ACCESS_EXPIRES });
 
         return successResponse(res, 201, "Google user registered successfully", { token, user: { id: user.id, name: user.name, email: user.email, school_id: user.school_id, username: user.username, role: user.role } });
     } catch (error) {
