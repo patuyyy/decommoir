@@ -1,35 +1,7 @@
-import React from 'react';
 import { FaRegUserCircle, FaBell, FaInfo, FaExpand } from "react-icons/fa";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import DeviceCard from '../components/app_components/DeviceCard';
 import { useNavigate } from 'react-router-dom';
-import { getLatestIotData } from '../actions/iot.actions';
-
-import {
-  Line,
-  Bar
-} from "react-chartjs-2";
-
-import {
-  Chart as ChartJS,
-  LineElement,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  Tooltip,
-  Legend
-} from "chart.js";
-
-ChartJS.register(
-  LineElement,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  Tooltip,
-  Legend
-);
 
 const dummyDevices = [
   {
@@ -75,74 +47,7 @@ export default function DashboardPage() {
   const savedUser = localStorage.getItem("user");
   const user = savedUser ? JSON.parse(savedUser) : null;
 
-  const [temp, setTemp] = useState([]);
-  const [hum, setHum] = useState([]);
-  const [connectionStatus, setConnectionStatus] = useState("Disconnected");
-
   const ws = useRef(null);
-
-  const formatChartData = (arr) => {
-    return {
-      labels: arr.map(d => d.time),
-      datasets: [
-        {
-          label: "Value",
-          data: arr.map(d => d.value),
-          borderWidth: 2,
-          fill: false
-        }
-      ]
-    };
-  };
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getLatestIotData();
-        setTemp(data.temperature);
-        setHum(data.humidity);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    // Use 127.0.0.1 to avoid localhost resolution issues
-    ws.current = new WebSocket("ws://127.0.0.1:3000/ws");
-    setConnectionStatus("Connecting...");
-
-    ws.current.onopen = () => {
-      console.log("WS Connected");
-      setConnectionStatus("Connected");
-    };
-    ws.current.onerror = (err) => {
-      console.log("WS Error:", err);
-      setConnectionStatus("Error");
-    };
-    ws.current.onclose = () => {
-      console.log("WS Disconnected");
-      setConnectionStatus("Disconnected");
-    };
-
-    ws.current.onmessage = (msg) => {
-      const data = JSON.parse(msg.data);
-
-      const newPoint = {
-        value: data.value,
-        time: new Date(data.timestamp).toLocaleTimeString()
-      };
-
-      if (data.type === 'v1') {
-        setTemp(prev => [...prev.slice(-49), newPoint]);
-      } else if (data.type === 'v2') {
-        setHum(prev => [...prev.slice(-49), newPoint]);
-      }
-    };
-
-    return () => ws.current?.close();
-  }, []);
 
   return (
     <div className="flex-1 bg-gray-100 p-8">
@@ -187,11 +92,6 @@ export default function DashboardPage() {
         </div>
 
         <div style={{ padding: 20 }}>
-          {/* <h2>Temperature</h2>
-            <Line data={formatChartData(temp)} /> */}
-
-          <h2 style={{ marginTop: 40 }}>Humidity</h2>
-          <Line data={formatChartData(hum)} key={hum.length} />
         </div>
       </div>
     </div>
