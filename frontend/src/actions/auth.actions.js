@@ -72,3 +72,22 @@ export const refreshToken = async () => {
     throw error;
   }
 };
+
+export const updatePhoto = async (files, token) => {
+  console.log("token jibril:", token);
+  try {
+    const formData = new FormData();
+    formData.append('image', files);
+    
+    const response = await api.post(`/api/auth/update/photo`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating photo:", error);
+    throw error;
+  }
+};
