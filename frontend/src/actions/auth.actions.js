@@ -5,7 +5,7 @@ export const loginUser = async (credentials) => {
     const response = await api.post("/api/auth/login", {
       username: credentials.identifier,
       password: credentials.password,
-    });
+    }, { withCredentials: true });
     return response.data;
   } catch (error) {
     console.error("Error logging in:", error);
