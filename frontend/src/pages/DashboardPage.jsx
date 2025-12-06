@@ -3,8 +3,7 @@ import { FaRegUserCircle, FaBell, FaInfo, FaExpand } from "react-icons/fa";
 import { useEffect, useRef, useState } from "react";
 import DeviceCard from '../components/app_components/DeviceCard';
 import { useNavigate } from 'react-router-dom';
-import axios from "axios";
-
+import { getLatestIotData } from '../actions/iot.actions';
 
 import {
   Line,
@@ -78,6 +77,7 @@ export default function DashboardPage() {
 
   const [temp, setTemp] = useState([]);
   const [hum, setHum] = useState([]);
+  const [connectionStatus, setConnectionStatus] = useState("Disconnected");
 
   const ws = useRef(null);
 
@@ -95,19 +95,36 @@ export default function DashboardPage() {
     };
   };
   useEffect(() => {
-    axios.get("http://localhost:3000/api/iot/latest")
-      .then(res => {
-        setTemp(res.data.temperature);
-        setHum(res.data.humidity);
-      })
-      .catch(err => console.log(err));
+    const fetchData = async () => {
+      try {
+        const data = await getLatestIotData();
+        setTemp(data.temperature);
+        setHum(data.humidity);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchData();
   }, []);
 
   useEffect(() => {
-    ws.current = new WebSocket("ws://localhost:3000");
+    // Use 127.0.0.1 to avoid localhost resolution issues
+    ws.current = new WebSocket("ws://127.0.0.1:3000/ws");
+    setConnectionStatus("Connecting...");
 
-    ws.current.onopen = () => console.log("WS Connected");
-    ws.current.onerror = (err) => console.log("WS Error:", err);
+    ws.current.onopen = () => {
+      console.log("WS Connected");
+      setConnectionStatus("Connected");
+    };
+    ws.current.onerror = (err) => {
+      console.log("WS Error:", err);
+      setConnectionStatus("Error");
+    };
+    ws.current.onclose = () => {
+      console.log("WS Disconnected");
+      setConnectionStatus("Disconnected");
+    };
 
     ws.current.onmessage = (msg) => {
       const data = JSON.parse(msg.data);
@@ -117,9 +134,9 @@ export default function DashboardPage() {
         time: new Date(data.timestamp).toLocaleTimeString()
       };
 
-      if (data.type === 'temperature') {
+      if (data.type === 'v1') {
         setTemp(prev => [...prev.slice(-49), newPoint]);
-      } else if (data.type === 'humidity') {
+      } else if (data.type === 'v2') {
         setHum(prev => [...prev.slice(-49), newPoint]);
       }
     };
@@ -133,6 +150,9 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
           <p className="text-lg text-gray-600">Welcome, {user ? user.name : "Guest"}!</p>
+          <p className={`text-sm ${connectionStatus === 'Connected' ? 'text-green-600' : 'text-red-600'}`}>
+            WS Status: {connectionStatus}
+          </p>
         </div>
         <div className="flex items-center space-x-5">
           <button className="text-2xl mt-1 text-gray-500 hover:text-gray-700">
@@ -166,14 +186,12 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="flex h-64 items-center justify-center rounded-lg bg-gray-50 text-gray-400">
-          <div style={{ padding: 20 }}>
-            {/* <h2>Temperature</h2>
+        <div style={{ padding: 20 }}>
+          {/* <h2>Temperature</h2>
             <Line data={formatChartData(temp)} /> */}
 
-            <h2 style={{ marginTop: 40 }}>Humidity</h2>
-            <Line data={formatChartData(hum)} />
-          </div>
+          <h2 style={{ marginTop: 40 }}>Humidity</h2>
+          <Line data={formatChartData(hum)} key={hum.length} />
         </div>
       </div>
     </div>

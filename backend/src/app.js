@@ -16,7 +16,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    origin: 'https://decommoir.online',
     credentials: true,
 }));
 
@@ -31,12 +31,16 @@ mongoose.connect(process.env.MONGODB_URI)
 
 const server = http.createServer(app);
 
-const wss = new WebSocketServer({ server });
+const wss = new WebSocketServer({ 
+  server,
+  path: '/ws'
+});
 
 console.log("WebSocket initialized...");
 
 app.locals.broadcast = (data) => {
     const payload = JSON.stringify(data);
+    console.log("Broadcasting:", data);
 
     wss.clients.forEach(client => {
         if (client.readyState === 1) {
@@ -56,5 +60,10 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, '0.0.0.0', () => {
     console.log(`HTTP + WebSocket running at http://localhost:${PORT}`);
 });
+
+wss.on('connection', () => {
+    console.log(">> Frontend WebSocket connected");
+});
+
 
 module.exports = app;

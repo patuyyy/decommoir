@@ -1,6 +1,7 @@
 import React from 'react';
 
 const DeviceCard = ({ device }) => {
+    
     return (
         <div className="rounded-xl bg-white p-6 shadow-sm">
             <h3 className="mb-4 text-lg font-semibold text-gray-800">
