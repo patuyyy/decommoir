@@ -11,38 +11,11 @@ import MonitoringGraphCard from '../components/app_components/MonitoringGraphCar
 import { getLatestIotData } from '../actions/iot.actions';
 import { useEffect, useState, useRef, useMemo } from 'react';
 
-import {
-    Line,
-    Bar
-} from "react-chartjs-2";
-
-import {
-    Chart as ChartJS,
-    LineElement,
-    BarElement,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    Tooltip,
-    Legend
-} from "chart.js";
-
-ChartJS.register(
-    LineElement,
-    BarElement,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    Tooltip,
-    Legend
-);
-
 const calculateAverage = (data) => {
     if (!data || data.length === 0) return 0;
     const total = data.reduce((acc, curr) => acc + (Number(curr.value) || 0), 0);
     return (total / data.length).toFixed(1);
 };
-
 
 export default function MonitoringPage() {
     const [temp, setTemp] = useState([]);
@@ -108,7 +81,7 @@ export default function MonitoringPage() {
                         };
                     });
                 };
-                
+
                 setTemp(formatData(data.temperature));
                 setHum(formatData(data.humidity));
 
@@ -120,7 +93,7 @@ export default function MonitoringPage() {
         fetchData();
     }, []);
     useEffect(() => {
-        ws.current = new WebSocket("ws://127.0.0.1:3000/ws");
+        ws.current = new WebSocket("wss://be.decommoir.online/ws");
         setConnectionStatus("Connecting...");
 
         ws.current.onopen = () => {
