@@ -47,8 +47,6 @@ export default function DashboardPage() {
   const savedUser = localStorage.getItem("user");
   const user = savedUser ? JSON.parse(savedUser) : null;
 
-  const ws = useRef(null);
-
   return (
     <div className="flex-1 bg-gray-100 p-8">
       <header className="mb-8 flex items-center justify-between">
