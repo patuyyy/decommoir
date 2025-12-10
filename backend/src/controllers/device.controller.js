@@ -28,18 +28,15 @@ async function getDeviceById(req, res) {
 }
 
 async function addDevice(req, res) {
-    const { school_id, device_size, deployed_at, last_maintenance } = req.body;
+    const { id, school_id, device_size, deployed_at, last_maintenance } = req.body;
     try {
-        if (req.user.role !== 'admin') {
-            return errorResponse(res, 403, 'Forbidden: You do not have permission to add a device');
-        }
-        if (!school_id || !device_size || !deployed_at) {
+        if (!id || !school_id || !device_size || !deployed_at) {
             return errorResponse(res, 400, 'Missing required fields');
         }
-        const newDevice = await deviceRepository.addDevice({ school_id, device_size, deployed_at, last_maintenance });
+        const newDevice = await deviceRepository.addDevice({ id, school_id, device_size, deployed_at, last_maintenance });
         successResponse(res, 201, 'Device successfully added', newDevice);
     } catch (error) {
-        errorResponse(res, 500, 'Failed to add device');
+        errorResponse(res, 500, error.message);
     }
 }
 

@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function MaggotStatusCard() {
-    const progress = 75;
+    const progress = 50;
 
     return (
         <div className="rounded-xl bg-white p-6 shadow-sm lg:col-span-2">

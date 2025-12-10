@@ -1,7 +1,16 @@
 const pool = require('../config/db.pg');
 
 async function getAllDevices() {
-    const query = 'SELECT * FROM maggot_devices';
+    const query = `
+    SELECT
+    maggot_devices.id,
+    schools.name AS school_name,
+    maggot_devices.device_size,
+    maggot_devices.deployed_at,
+    maggot_devices.last_maintenance
+    FROM maggot_devices
+    JOIN schools ON maggot_devices.school_id = schools.id
+    `;
     const res = await pool.query(query);
     return res.rows;
 }
@@ -13,9 +22,9 @@ async function getDeviceById(id) {
     return res.rows[0];
 }
 
-async function addDevice({ school_id, device_size, deployed_at, last_maintenance }) {
-    const query = 'INSERT INTO maggot_devices (school_id, device_size, deployed_at, last_maintenance) VALUES ($1, $2, $3, $4) RETURNING *';
-    const values = [school_id, device_size, deployed_at, last_maintenance];
+async function addDevice({ id, school_id, device_size, deployed_at, last_maintenance }) {
+    const query = 'INSERT INTO maggot_devices (id, school_id, device_size, deployed_at, last_maintenance) VALUES ($1, $2, $3, $4, $5) RETURNING *';
+    const values = [id, school_id, device_size, deployed_at, last_maintenance];
     const res = await pool.query(query, values);
     return res.rows[0];
 }
