@@ -52,7 +52,7 @@ CREATE TABLE schools (
 -- TABLE: maggot_devices
 -- ===============================================
 CREATE TABLE maggot_devices (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id int PRIMARY KEY NOT NULL,
     school_id UUID NOT NULL REFERENCES schools(id) ON DELETE CASCADE,
     device_size device_size NOT NULL,
     deployed_at DATE,
@@ -66,7 +66,7 @@ CREATE TABLE maggot_devices (
 -- ===============================================
 CREATE TABLE harvest_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    device_id UUID NOT NULL REFERENCES maggot_devices(id) ON DELETE CASCADE,
+    device_id int NOT NULL REFERENCES maggot_devices(id) ON DELETE CASCADE,
     harvest_at DATE NOT NULL,
     volume FLOAT CHECK (volume >= 0),
     updated_at TIMESTAMP DEFAULT NOW(),
@@ -78,7 +78,7 @@ CREATE TABLE harvest_logs (
 -- ===============================================
 CREATE TABLE maintenance_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    device_id UUID NOT NULL REFERENCES maggot_devices(id) ON DELETE CASCADE,
+    device_id int NOT NULL REFERENCES maggot_devices(id) ON DELETE CASCADE,
     maintenance_at DATE NOT NULL,
     details TEXT,
     updated_at TIMESTAMP DEFAULT NOW(),
@@ -90,7 +90,7 @@ CREATE TABLE maintenance_logs (
 -- ===============================================
 CREATE TABLE food_waste_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    device_id UUID NOT NULL REFERENCES maggot_devices(id) ON DELETE CASCADE,
+    device_id int NOT NULL REFERENCES maggot_devices(id) ON DELETE CASCADE,
     image_url TEXT,
     taken_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT NOW(),

@@ -53,7 +53,7 @@ export default function App() {
             }
           />
           <Route
-            path="/monitoring"
+            path="/monitoring/:id"
             element={
               <ProtectedRoute>
                 <MonitoringPage />

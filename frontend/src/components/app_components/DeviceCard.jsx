@@ -5,7 +5,7 @@ const DeviceCard = ({ device }) => {
     return (
         <div className="rounded-xl bg-white p-6 shadow-sm">
             <h3 className="mb-4 text-lg font-semibold text-gray-800">
-                {device.name}
+                DEVICE {device.school_name}
             </h3>
 
             <div className="space-y-2 text-sm text-gray-600">

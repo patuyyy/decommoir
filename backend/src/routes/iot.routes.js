@@ -9,7 +9,13 @@ const router = express.Router();
 router.post('/blynk-webhook', iotController.blynkWebhook);
 
 // Route untuk menampilkan data sensor di client
+router.get('/latest50/:deviceId', iotController.getLatest50SensorData);
+
+// Route untuk menampilkan data sensor di client
 router.get('/latest', iotController.getLatestSensorData);
+
+// Route untuk menampilkan data sensor di client
+router.get('/latest/:deviceId', iotController.getLatestSensorDataById);
 
 // Route untuk mengupload foto sampah
 router.post('/waste-upload', upload.single('image'), iotController.wasteHandler);

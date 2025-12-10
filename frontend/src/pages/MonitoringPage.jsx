@@ -8,8 +8,9 @@ import IncomingWasteCard from '../components/app_components/IncomingWasteCard';
 import MaggotStatusCard from '../components/app_components/MaggotStatusCard';
 import MonitoringGraphCard from '../components/app_components/MonitoringGraphCard';
 
-import { getLatestIotData } from '../actions/iot.actions';
-import { useEffect, useState, useRef, useMemo } from 'react';
+import { getLatest50IotData } from '../actions/iot.actions';  
+import { useEffect, useState, useRef, useMemo } from 'react';   
+import { useParams } from 'react-router-dom';
 
 const calculateAverage = (data) => {
     if (!data || data.length === 0) return 0;
@@ -18,17 +19,31 @@ const calculateAverage = (data) => {
 };
 
 export default function MonitoringPage() {
+    const id = useParams();
     const [temp, setTemp] = useState([]);
     const [hum, setHum] = useState([]);
-    const avgTemp = useMemo(() => calculateAverage(temp), [temp]);
-    const avgHum = useMemo(() => calculateAverage(hum), [hum]);
+    const [airQ, setAirQ] = useState([]);
+    const latestTemp = useMemo(() => {
+        if (!temp || temp.length === 0) return 0;
+        return Number(temp[temp.length - 1].value).toFixed(1);
+    }, [temp]);
+    const latestHum = useMemo(() => {
+        if (!hum || hum.length === 0) return 0;
+        return Number(hum[hum.length - 1].value).toFixed(1);
+    }, [hum]);
+    const latestAirQ = useMemo(() => {
+        if (!airQ || airQ.length === 0) return 0;
+        return Number(airQ[airQ.length - 1].value).toFixed(1);
+    }, [airQ]);
+
+    const ws = useRef(null);
 
     const stats = [
         {
             id: 1,
             icon: <FaThermometerEmpty />,
             label: 'Temp.',
-            value: avgTemp,
+            value: latestTemp,
             unit: '°C',
             optimal: 'Optimal: 25 - 30 °C'
         },
@@ -36,36 +51,34 @@ export default function MonitoringPage() {
             id: 2,
             icon: <FaDroplet />,
             label: 'Humidity',
-            value: avgHum,
+            value: latestHum,
             unit: '%',
             optimal: 'Optimal: 60 - 70 %'
         },
         {
             id: 3,
             icon: <FaFlask />,
-            label: 'Amonia',
-            value: '12',
+            label: 'Air Quality',
+            value: latestAirQ,
             unit: 'ppm',
             optimal: 'Optimal: <20 ppm'
         },
         {
             id: 4,
             icon: <FaTrashAlt />,
-            label: 'Waste processed',
+            label: 'Trash Capacity',
             value: '10',
             unit: 'Kg',
             optimal: ' '
         }
     ];
 
-    const [connectionStatus, setConnectionStatus] = useState("Disconnected");
-
-    const ws = useRef(null);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await getLatestIotData();
+                const data = await getLatest50IotData(id.id);
+                console.log(data);
 
                 const formatData = (dataArray) => {
                     return dataArray.map(item => {
@@ -84,7 +97,7 @@ export default function MonitoringPage() {
 
                 setTemp(formatData(data.temperature));
                 setHum(formatData(data.humidity));
-
+                setAirQ(formatData(data.airQuality));
             } catch (err) {
                 console.log(err);
             }
@@ -92,13 +105,12 @@ export default function MonitoringPage() {
 
         fetchData();
     }, []);
+
     useEffect(() => {
-        ws.current = new WebSocket("wss://be.decommoir.online/ws");
-        setConnectionStatus("Connecting...");
+        ws.current = new WebSocket(import.meta.env.VITE_WS_URL);
 
         ws.current.onopen = () => {
             console.log("WS Connected");
-            setConnectionStatus("Connected");
         };
 
         ws.current.onmessage = (msg) => {
@@ -121,6 +133,8 @@ export default function MonitoringPage() {
                 setTemp(prev => [...prev.slice(-49), newPoint]);
             } else if (data.type === 'v2') {
                 setHum(prev => [...prev.slice(-49), newPoint]);
+            } else if (data.type === 'v5') {
+                setAirQ(prev => [...prev.slice(-49), newPoint]);
             }
         };
 
@@ -156,7 +170,7 @@ export default function MonitoringPage() {
 
                 <IncomingWasteCard />
                 <MaggotStatusCard />
-                <MonitoringGraphCard data1={temp} data2={hum} label1="Temperature" label2="Humidity" />
+                <MonitoringGraphCard data1={temp} data2={hum} data3={airQ} label1="Temperature" label2="Humidity" label3="Air Quality" />
 
             </div>
 
