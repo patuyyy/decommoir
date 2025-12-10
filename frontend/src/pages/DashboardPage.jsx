@@ -93,25 +93,6 @@ export default function DashboardPage() {
           </p>
         )}
       </div>
-
-      <div className="mt-6 rounded-xl bg-white p-6 shadow-sm">
-        <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-800">
-            Grafik Monitoring 7 Hari Terakhir
-          </h3>
-          <div className="flex space-x-3 text-gray-500">
-            <button className="hover:text-gray-700">
-              <FaInfo />
-            </button>
-            <button className="hover:text-gray-700">
-              <FaExpand />
-            </button>
-          </div>
-        </div>
-
-        <div style={{ padding: 20 }}>
-        </div>
-      </div>
     </div>
   );
 };

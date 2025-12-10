@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function MaggotStatusCard() {
-    const progress = 50;
+    const progress = 47.9;
 
     return (
         <div className="rounded-xl bg-white p-6 shadow-sm lg:col-span-2">
@@ -9,7 +9,7 @@ export default function MaggotStatusCard() {
             <div className="space-y-2 text-sm text-gray-600">
                 <div className="flex justify-between">
                     <span>Total Weight</span>
-                    <span className="font-medium text-gray-800">15 Kg</span>
+                    <span className="font-medium text-gray-800">630 gram</span>
                 </div>
                 <div className="flex justify-between">
                     <span>Time till Harvest</span>

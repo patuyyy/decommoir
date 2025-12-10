@@ -1,7 +1,7 @@
 import React from 'react';
 
 const wasteItems = [
-    { id: 1, name: 'Nasi', amount: '1Kg', emoji: '🍚' }
+    { id: 1, name: 'Pisang', amount: '500 gram', emoji: '🍌' }
 ];
 
 export default function IncomingWasteCard() {
