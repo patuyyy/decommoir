@@ -114,6 +114,7 @@ export default function MonitoringPage() {
                 setHum(formatData(data.humidity));
                 setAirQ(formatData(data.airQuality));
                 setDistance(formatData(convertToPercentage(data.distance)));
+                console.log(convertToPercentage(data.distance));
             } catch (err) {
                 console.log(err);
             }
