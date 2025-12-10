@@ -103,7 +103,7 @@ export default function MonitoringPage() {
                 setTemp(formatData(data.temperature));
                 setHum(formatData(data.humidity));
                 setAirQ(formatData(data.airQuality));
-                setDistance(formatData(data.distance));
+                setDistance(formatData((30-data.distance)/30*100));
             } catch (err) {
                 console.log(err);
             }
