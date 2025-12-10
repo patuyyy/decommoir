@@ -150,6 +150,7 @@ export default function MonitoringPage() {
                 value: finalValue,
                 time: timeString
             };
+            console.log(newPoint);
 
             if (data.type === 'v1') {
                 setTemp(prev => [...prev.slice(-49), newPoint]);
