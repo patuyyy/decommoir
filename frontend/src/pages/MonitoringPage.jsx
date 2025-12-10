@@ -7,6 +7,7 @@ import StatCard from '../components/app_components/StatCard';
 import IncomingWasteCard from '../components/app_components/IncomingWasteCard';
 import MaggotStatusCard from '../components/app_components/MaggotStatusCard';
 import MonitoringGraphCard from '../components/app_components/MonitoringGraphCard';
+import MonitoringGraphCard1 from '../components/app_components/MonitoringGraphCard1';
 
 import { getLatest50IotData } from '../actions/iot.actions';
 import { useEffect, useState, useRef, useMemo } from 'react';
