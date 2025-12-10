@@ -22,18 +22,13 @@ ChartJS.register(
     Legend
 );
 
-export default function MonitoringGraphCard({
+export default function MonitoringGraphCard1({
     data1 = [],
-    data2 = [],
-    data3 = [],
     label1 = "Data 1",
-    label2 = "Data 2",
-    label3 = "Data 3",
 }) {
 
     const formatChartData = () => {
-        const sourceData = data1.length >= data2.length ? data1 : data2;
-        const labels = sourceData.map(d => d.time);
+        const labels = data1.map(d => d.time);
 
         return {
             labels: labels,
@@ -46,24 +41,6 @@ export default function MonitoringGraphCard({
                     borderWidth: 2,
                     tension: 0.3,
                     spanGaps: true 
-                },
-                {
-                    label: label2,
-                    data: labels.map((_, i) => data2[i]?.value ?? null),
-                    borderColor: 'rgb(53, 162, 235)',
-                    backgroundColor: 'rgba(53, 162, 235, 0.5)',
-                    borderWidth: 2,
-                    tension: 0.3,
-                    spanGaps: true
-                },
-                {
-                    label: label3,
-                    data: labels.map((_, i) => data3[i]?.value ?? null),
-                    borderColor: 'rgba(0, 255, 8, 1)',
-                    backgroundColor: 'rgba(0, 255, 8, 0.5)',
-                    borderWidth: 2,
-                    tension: 0.3,
-                    spanGaps: true
                 }
             ]
         };
