@@ -23,6 +23,7 @@ export default function MonitoringPage() {
     const [temp, setTemp] = useState([]);
     const [hum, setHum] = useState([]);
     const [airQ, setAirQ] = useState([]);
+    const [distance, setDistance] = useState([]);
     const latestTemp = useMemo(() => {
         if (!temp || temp.length === 0) return 0;
         return Number(temp[temp.length - 1].value).toFixed(1);
@@ -35,6 +36,10 @@ export default function MonitoringPage() {
         if (!airQ || airQ.length === 0) return 0;
         return Number(airQ[airQ.length - 1].value).toFixed(1);
     }, [airQ]);
+    const latestDistance = useMemo(() => {
+        if (!distance || distance.length === 0) return 0;
+        return Number(distance[distance.length - 1].value).toFixed(1);
+    }, [distance]);
 
     const ws = useRef(null);
 
@@ -61,14 +66,14 @@ export default function MonitoringPage() {
             label: 'Air Quality',
             value: latestAirQ,
             unit: 'ppm',
-            optimal: 'Optimal: <20 ppm'
+            optimal: 'Optimal: 250 ppm'
         },
         {
             id: 4,
             icon: <FaTrashAlt />,
             label: 'Trash Capacity',
-            value: '10',
-            unit: 'Kg',
+            value: latestDistance,
+            unit: '%',
             optimal: ' '
         }
     ];
@@ -98,6 +103,7 @@ export default function MonitoringPage() {
                 setTemp(formatData(data.temperature));
                 setHum(formatData(data.humidity));
                 setAirQ(formatData(data.airQuality));
+                setDistance(formatData(data.distance));
             } catch (err) {
                 console.log(err);
             }
@@ -135,6 +141,8 @@ export default function MonitoringPage() {
                 setHum(prev => [...prev.slice(-49), newPoint]);
             } else if (data.type === 'v5') {
                 setAirQ(prev => [...prev.slice(-49), newPoint]);
+            } else if (data.type === 'v8') {
+                setDistance(prev => [...prev.slice(-49), newPoint]);
             }
         };
 
@@ -170,7 +178,7 @@ export default function MonitoringPage() {
 
                 <IncomingWasteCard />
                 <MaggotStatusCard />
-                <MonitoringGraphCard data1={temp} data2={hum} data3={airQ} label1="Temperature" label2="Humidity" label3="Air Quality" />
+                <MonitoringGraphCard data1={temp} data2={hum} data3={airQ} data4={distance} label1="Temperature" label2="Humidity" label3="Air Quality" label4="Trash Capacity" />
 
             </div>
 

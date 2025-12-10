@@ -22,7 +22,6 @@ export default function DashboardPage() {
 
         const rawDevices = devicesRes.data;
         const sensorData = sensorRes;
-        console.log(`sensorData: ${sensorData}`);
 
         const formatTime = (isoString) => {
            if (!isoString) return "Offlinex`";
@@ -36,19 +35,20 @@ export default function DashboardPage() {
           const tempObj = sensorData.temperature.find(t => String(t.device_id) === deviceIdStr);
           const humObj = sensorData.humidity.find(h => String(h.device_id) === deviceIdStr);
           const airObj = sensorData.airQuality?.find(a => String(a.device_id) === deviceIdStr);
-          const lastUpdateRaw = tempObj?.time || humObj?.time || airObj?.time;
+          const disObj = sensorData.distance?.find(d => String(d.device_id) === deviceIdStr);
+          const lastUpdateRaw = tempObj?.time || humObj?.time || airObj?.time || disObj?.time;
 
           return {
             ...device,
             temp: tempObj ? tempObj.value : 0,
             humidity: humObj ? humObj.value : 0,
-            ph: airObj ? airObj.value : 0,
+            airQ: airObj ? airObj.value : 0,
+            distance: disObj ? (((30 - disObj.value)/30)*100).toFixed(2) : 0,
             lastUpdate: formatTime(lastUpdateRaw)
           };
         });
 
         setDevices(mergedDevices);
-        console.log(mergedDevices);
 
       } catch (error) {
         console.error("Error loading dashboard:", error);

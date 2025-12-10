@@ -18,12 +18,12 @@ const DeviceCard = ({ device }) => {
                     <span className="font-medium text-gray-800">: {device.humidity}</span>
                 </div>
                 <div className="flex justify-between">
-                    <span>pH content</span>
-                    <span className="font-medium text-gray-800">: {device.ph}</span>
+                    <span>Air Quality</span>
+                    <span className="font-medium text-gray-800">: {device.airQ}</span>
                 </div>
                 <div className="flex justify-between">
-                    <span>Total processed waste</span>
-                    <span className="font-medium text-gray-800">: {device.waste}</span>
+                    <span>Trash Capacity</span>
+                    <span className="font-medium text-gray-800">: {device.distance}%</span>
                 </div>
             </div>
 

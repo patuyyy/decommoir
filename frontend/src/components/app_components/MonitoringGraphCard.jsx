@@ -26,9 +26,11 @@ export default function MonitoringGraphCard({
     data1 = [],
     data2 = [],
     data3 = [],
+    data4 = [],
     label1 = "Data 1",
     label2 = "Data 2",
-    label3 = "Data 3"
+    label3 = "Data 3",
+    label4 = "Data 4"
 }) {
 
     const formatChartData = () => {
@@ -61,6 +63,15 @@ export default function MonitoringGraphCard({
                     data: labels.map((_, i) => data3[i]?.value ?? null),
                     borderColor: 'rgba(0, 255, 8, 1)',
                     backgroundColor: 'rgba(0, 255, 8, 0.5)',
+                    borderWidth: 2,
+                    tension: 0.3,
+                    spanGaps: true
+                },
+                {
+                    label: label4,
+                    data: labels.map((_, i) => data4[i]?.value ?? null),
+                    borderColor: 'rgba(255, 255, 0, 1)',
+                    backgroundColor: 'rgba(255, 255, 0, 0.5)',
                     borderWidth: 2,
                     tension: 0.3,
                     spanGaps: true
