@@ -200,8 +200,8 @@ export default function MonitoringPage() {
 
                 <IncomingWasteCard />
                 <MaggotStatusCard />
-                <MonitoringGraphCard data1={temp} data2={hum} data3={airQ} label1="Temperature" label2="Humidity" label3="Air Quality" />
-                <MonitoringGraphCard1 data1={distance} label1="Trash Capacity" />
+                <MonitoringGraphCard data1={temp} data2={hum} data3={distance} label1="Temperature" label2="Humidity" label3="Trash Capacity" />
+                <MonitoringGraphCard1 data1={airQ} label1="Air Quality" />
 
             </div>
 
