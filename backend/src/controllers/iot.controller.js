@@ -28,14 +28,15 @@ async function blynkWebhook(req, res) {
 async function getLatest50SensorData(req, res) {
     const deviceId = req.params.deviceId;
     try {
-        const [temperature, humidity, airQuality] = await Promise.all([
+        const [temperature, humidity, airQuality, distance] = await Promise.all([
             SensorData.find({ type: 'v1', device_id: deviceId }).sort({ timestamp: -1 }).limit(50),
             SensorData.find({ type: 'v2', device_id: deviceId }).sort({ timestamp: -1 }).limit(50),
-            SensorData.find({ type: 'v5', device_id: deviceId }).sort({ timestamp: -1 }).limit(50)
+            SensorData.find({ type: 'v5', device_id: deviceId }).sort({ timestamp: -1 }).limit(50),
+            SensorData.find({ type: 'v8', device_id: deviceId }).sort({ timestamp: -1 }).limit(50)
         ])
 
         const formatData = arr => arr.map(d => ({ device_id: d.device_id, type: d.type, value: d.value, time: d.timestamp.toISOString() })).reverse();
-        res.json({ temperature: formatData(temperature), humidity: formatData(humidity), airQuality: formatData(airQuality) })
+        res.json({ temperature: formatData(temperature), humidity: formatData(humidity), airQuality: formatData(airQuality), distance: formatData(distance) })
 
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -76,11 +77,17 @@ async function getLatestSensorData(req, res) {
         const airQuality = latestReadings
             .filter(item => item.type === 'v5')
             .map(formatData);
+        
+        const distance = latestReadings
+            .filter(item => item.type === 'v8')
+            .map(formatData);
+        
 
         res.json({ 
             temperature, 
             humidity, 
-            airQuality 
+            airQuality,
+            distance 
         });
 
     } catch (err) {
@@ -124,11 +131,16 @@ async function getLatestSensorDataById(req, res) {
         const airQuality = latestReadings
             .filter(item => item.type === 'v5')
             .map(formatData);
+        
+        const distance = latestReadings
+            .filter(item => item.type === 'v8')
+            .map(formatData);
 
         res.json({
             temperature,
             humidity,
-            airQuality
+            airQuality,
+            distance
         });
     } catch (err) {
         console.error("Error in getLatestSensorDataById:", err);
