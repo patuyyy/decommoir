@@ -8,8 +8,8 @@ import IncomingWasteCard from '../components/app_components/IncomingWasteCard';
 import MaggotStatusCard from '../components/app_components/MaggotStatusCard';
 import MonitoringGraphCard from '../components/app_components/MonitoringGraphCard';
 
-import { getLatest50IotData } from '../actions/iot.actions';  
-import { useEffect, useState, useRef, useMemo } from 'react';   
+import { getLatest50IotData } from '../actions/iot.actions';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 const calculateAverage = (data) => {
@@ -42,6 +42,16 @@ export default function MonitoringPage() {
     }, [distance]);
 
     const ws = useRef(null);
+
+    const convertToPercentage = (rawDistance) => {
+        const maxHeight = 30;
+        const currentDist = Number(rawDistance);
+
+        const validDist = Math.min(Math.max(currentDist, 0), maxHeight);
+        const percentage = ((maxHeight - validDist) / maxHeight) * 100;
+
+        return percentage.toFixed(0);
+    };
 
     const stats = [
         {
@@ -103,7 +113,7 @@ export default function MonitoringPage() {
                 setTemp(formatData(data.temperature));
                 setHum(formatData(data.humidity));
                 setAirQ(formatData(data.airQuality));
-                setDistance(formatData((30-data.distance)/30*100));
+                setDistance(formatData(convertToPercentage(data.distance)));
             } catch (err) {
                 console.log(err);
             }
@@ -130,8 +140,14 @@ export default function MonitoringPage() {
                 second: '2-digit'
             });
 
+            let finalValue = data.value;
+
+            if (data.type === 'v8') {
+                finalValue = convertToPercentage(data.value);
+            }
+
             const newPoint = {
-                value: data.value,
+                value: finalValue,
                 time: timeString
             };
 
