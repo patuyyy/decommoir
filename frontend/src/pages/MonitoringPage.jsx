@@ -93,13 +93,15 @@ export default function MonitoringPage() {
         const fetchData = async () => {
             try {
                 const data = await getLatest50IotData(id.id);
-                console.log(data);
 
-                const formatData = (dataArray) => {
+                const formatData = (dataArray, isDistance = false) => {
+                    if (!dataArray) return []; 
+
                     return dataArray.map(item => {
                         const dateObj = new Date(item.time);
                         return {
                             ...item,
+                            value: isDistance ? convertToPercentage(item.value) : item.value, 
                             time: dateObj.toLocaleTimeString('id-ID', {
                                 hour12: false,
                                 hour: '2-digit',
@@ -113,15 +115,16 @@ export default function MonitoringPage() {
                 setTemp(formatData(data.temperature));
                 setHum(formatData(data.humidity));
                 setAirQ(formatData(data.airQuality));
-                setDistance(formatData(convertToPercentage(data.distance)));
-                console.log(convertToPercentage(data.distance));
+
+                setDistance(formatData(data.distance, true)); 
+
             } catch (err) {
                 console.log(err);
             }
         };
 
-        fetchData();
-    }, []);
+        if (id.id) fetchData(); 
+    }, [id.id]); 
 
     useEffect(() => {
         ws.current = new WebSocket(import.meta.env.VITE_WS_URL);
