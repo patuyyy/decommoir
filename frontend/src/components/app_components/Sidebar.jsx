@@ -12,7 +12,6 @@ export default function Sidebar() {
     const { logout } = useAuth();
     const navItems = [
         { name: "Dashboard", path: "/dashboard", icon: <MdDashboard /> },
-        { name: "Monitoring", path: "/monitoring", icon: <FaCamera /> },
         { name: "Settings", path: "/settings", icon: <FaGear /> },
     ];
 

@@ -179,7 +179,7 @@ export default function MonitoringPage() {
                     <button className="text-2xl text-gray-500 hover:text-gray-700">
                         <FaBell />
                     </button>
-                    <button className="text-3xl text-gray-500 hover:text-gray-700">
+                    <button onClick={() => navigate('/profile')} className="text-3xl text-gray-500 hover:text-gray-700">
                         <FaRegUserCircle />
                     </button>
                 </div>
