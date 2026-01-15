@@ -1,7 +1,9 @@
 # 🌱 Decommoir
 > **Smart Maggot Waste Decomposition Monitoring System**
 
-![Decommoir Banner](https://via.placeholder.com/1200x400?text=Decommoir+Dashboard+Preview)
+<p>
+  <img src="public/decommoir.png" alt="Decommoir Banner" width="150" />
+</p>
 
 **Decommoir** is a cutting-edge IoT-enabled platform designed to revolutionize organic waste management in schools through **Black Soldier Fly (BSF) Maggot** bioconversion. It provides real-time monitoring, data analytics, and comprehensive management tools for maggot cultivation devices.
 
