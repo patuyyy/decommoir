@@ -145,5 +145,5 @@ This project is licensed under the ISC License.
 ---
 
 <p align="center">
-  Made with ❤️ by <b>Ihsan</b>
+  Made with ❤️ by <b>Kelompok 9 Despro Teknik Komputer 2025</b>
 </p>
