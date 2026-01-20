@@ -141,3 +141,97 @@ resource "google_compute_firewall" "allow_backend_internal" {
 
   source_ranges = ["10.10.0.0/16"]
 }
+
+resource "google_service_account" "frontend_sa" {
+  account_id = "decommoir-frontend"
+  display_name = "Decommoir Frontend Runtime"
+}
+
+resource "google_project_iam_member" "frontend_artifact_reader" {
+  project = var.project_id
+  role    = "roles/artifactregistry.reader"
+  member  = "serviceAccount:${google_service_account.frontend_sa.email}"
+}
+
+resource "google_compute_instance_template" "frontend_tpl" {
+  name_prefix = "decommoir-frontend-"
+  machine_type = "e2-micro"
+
+  tags = ["frontend"]
+
+  service_account {
+    email  = google_service_account.frontend_sa.email
+    scopes = ["cloud-platform"]
+  }
+
+  network_interface {
+    subnetwork = google_compute_subnetwork.public.id
+
+    access_config {
+      # Ephemeral public IP
+    }
+  }
+
+  disk {
+    source_image = "projects/ubuntu-os-cloud/global/images/family/ubuntu-2204-lts"
+    auto_delete  = true
+    boot         = true
+  }
+
+  metadata_startup_script = <<-EOT
+    #!/bin/bash
+    set -e
+
+    apt-get update
+    apt-get install -y docker.io
+
+    systemctl enable docker
+    systemctl start docker
+
+    gcloud auth configure-docker asia-southeast2-docker.pkg.dev --quiet
+
+    docker run -d \
+      --restart=always \
+      -p 80:80 \
+      ${var.frontend_image}
+  EOT
+}
+
+resource "google_compute_health_check" "frontend_hc" {
+  name = "frontend-hc"
+
+  http_health_check {
+    port = 80
+    request_path = "/"
+  }
+}
+
+resource "google_compute_instance_group_manager" "frontend_mig" {
+  name               = "frontend-mig"
+  zone               = var.zone
+  base_instance_name = "frontend"
+  target_size        = 2
+
+  version {
+    instance_template = google_compute_instance_template.frontend_tpl.id
+  }
+
+  auto_healing_policies {
+    health_check      = google_compute_health_check.frontend_hc.id
+    initial_delay_sec = 120
+  }
+}
+
+resource "google_compute_firewall" "allow_frontend_http" {
+  name    = "allow-frontend-http"
+  network = google_compute_network.vpc.name
+
+  allow {
+    protocol = "tcp"
+    ports    = ["80"]
+  }
+
+  source_ranges = ["10.10.0.0/16"]
+  target_tags = ["frontend"]
+}
+

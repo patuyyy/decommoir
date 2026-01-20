@@ -24,3 +24,8 @@ variable "backend_env" {
   description = "Backend environment variables"
   type        = map(string)
 }
+
+variable "frontend_image" {
+  description = "Frontend container image"
+  type        = string
+}
