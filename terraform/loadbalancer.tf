@@ -42,7 +42,7 @@ resource "google_compute_url_map" "web_map" {
 
   path_matcher {
     name            = "api-matcher"
-    default_service = google_compute_backend_service.frontend_backend.id
+    default_service = google_compute_backend_service.fgrontend_backend.id
 
     path_rule {
       paths   = ["/api/*"]
