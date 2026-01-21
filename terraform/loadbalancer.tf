@@ -14,10 +14,43 @@ resource "google_compute_backend_service" "frontend_backend" {
   }
 }
 
-resource "google_compute_url_map" "web_map" {
-  name            = "decommoir-url-map"
-  default_service = google_compute_backend_service.frontend_backend.id
+resource "google_compute_backend_service" "backend_backend" {
+  name                  = "backend-backend"
+  protocol              = "HTTP"
+  port_name             = "be-port"
+  load_balancing_scheme = "EXTERNAL"
+
+  health_checks = [
+    google_compute_health_check.backend_hc.id
+  ]
+
+  backend {
+    group = google_compute_instance_group_manager.backend_mig.instance_group
+  }
 }
+
+resource "google_compute_url_map" "web_map" {
+  name = "decommoir-url-map"
+
+  # default → frontend
+  default_service = google_compute_backend_service.frontend_backend.id
+
+  host_rule {
+    hosts        = ["*"]g
+    path_matcher = "api-matcher"
+  }
+
+  path_matcher {
+    name            = "api-matcher"
+    default_service = google_compute_backend_service.frontend_backend.id
+
+    path_rule {
+      paths   = ["/api/*"]
+      service = google_compute_backend_service.backend_backend.id
+    }
+  }
+}
+
 
 resource "google_compute_target_http_proxy" "http_proxy" {
   name    = "decommoir-http-proxy"

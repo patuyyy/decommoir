@@ -141,6 +141,11 @@ resource "google_compute_instance_group_manager" "backend_mig" {
     health_check      = google_compute_health_check.backend_hc.id
     initial_delay_sec = 120
   }
+
+  named_port {
+    name = "be-port"
+    port = 3000
+  }
 }
 
 resource "google_compute_firewall" "allow_backend_internal" {
@@ -232,6 +237,11 @@ resource "google_compute_instance_group_manager" "frontend_mig" {
   auto_healing_policies {
     health_check      = google_compute_health_check.frontend_hc.id
     initial_delay_sec = 120
+  }
+
+  named_port {
+    name = "http"
+    port = 80
   }
 }
 
