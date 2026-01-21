@@ -29,3 +29,7 @@ variable "frontend_image" {
   description = "Frontend container image"
   type        = string
 }
+variable "frontend_env" {
+  description = "Frontend environment variables"
+  type        = map(string)
+}

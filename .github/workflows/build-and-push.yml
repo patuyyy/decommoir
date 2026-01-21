@@ -53,6 +53,9 @@ jobs:
     - name: Build Frontend Image
       run: |
         docker build \
+          --build-arg VITE_API_URL=${{ secrets.VITE_API_URL }} \
+          --build-arg VITE_WS_URL=${{ secrets.VITE_WS_URL }} \
+          --build-arg VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }} \
           -t $REGION-docker.pkg.dev/$PROJECT_ID/$REPO/frontend:latest \
           ./frontend
 
