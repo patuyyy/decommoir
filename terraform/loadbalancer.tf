@@ -36,7 +36,7 @@ resource "google_compute_url_map" "web_map" {
   default_service = google_compute_backend_service.frontend_backend.id
 
   host_rule {
-    hosts        = ["*"]g
+    hosts        = ["*"]
     path_matcher = "api-matcher"
   }
 
