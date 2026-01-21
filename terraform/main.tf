@@ -123,7 +123,7 @@ resource "google_compute_health_check" "backend_hc" {
 
   http_health_check {
     port = 3000
-    request_path = "/"
+    request_path = "/api/health"
   }
 }
 
