@@ -54,7 +54,7 @@ resource "google_compute_url_map" "web_map" {
 
 resource "google_compute_target_http_proxy" "http_proxy" {
   name    = "decommoir-http-proxy"
-  url_map = google_compute_url_map.web_map.id
+  url_map = google_compute_url_map.https_redirect.id
 }
 
 resource "google_compute_global_forwarding_rule" "http_forwarding" {
@@ -75,4 +75,35 @@ resource "google_compute_firewall" "allow_lb_to_frontend" {
 
   source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
   target_tags   = ["frontend"]
+}
+
+resource "google_compute_managed_ssl_certificate" "decommoir_cert" {
+  name = "decommoir-ssl-cert"
+
+  managed {
+    domains = ["decommoir.online", "www.decommoir.online"]
+  }
+}
+
+resource "google_compute_target_https_proxy" "https_proxy" {
+  name             = "decommoir-https-proxy"
+  url_map          = google_compute_url_map.web_map.id
+  ssl_certificates = [google_compute_managed_ssl_certificate.decommoir_cert.id]
+}
+
+resource "google_compute_global_forwarding_rule" "https_forwarding" {
+  name                  = "decommoir-https-forwarding"
+  target                = google_compute_target_https_proxy.https_proxy.id
+  port_range            = "443"
+  load_balancing_scheme = "EXTERNAL"
+}
+
+resource "google_compute_url_map" "https_redirect" {
+  name = "http-to-https"
+
+  default_url_redirect {
+    https_redirect = true
+    strip_query    = false
+  }
+  
 }
