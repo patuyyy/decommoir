@@ -10,6 +10,7 @@ const authRouter = require('./routes/auth.routes');
 const deviceRouter = require('./routes/device.routes');
 const schoolRouter = require('./routes/school.routes');
 const iotRouter = require('./routes/iot.routes');
+const healtRouter = require('./routes/health.routes');
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/devices', deviceRouter);
 app.use('/api/schools', schoolRouter);
 app.use('/api/iot', iotRouter);
+app.use('/api/health', healtRouter);
 
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log("MongoDB connected"))

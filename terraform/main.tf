@@ -123,7 +123,7 @@ resource "google_compute_health_check" "backend_hc" {
 
   http_health_check {
     port = 3000
-    request_path = "/health"
+    request_path = "/"
   }
 }
 
@@ -157,7 +157,7 @@ resource "google_compute_firewall" "allow_backend_internal" {
     ports    = ["3000"]
   }
 
-  source_ranges = ["10.10.0.0/16"]
+  source_ranges = ["0.0.0.0/0"]
 }
 
 resource "google_service_account" "frontend_sa" {
@@ -245,16 +245,4 @@ resource "google_compute_instance_group_manager" "frontend_mig" {
   }
 }
 
-resource "google_compute_firewall" "allow_frontend_http" {
-  name    = "allow-frontend-http"
-  network = google_compute_network.vpc.name
-
-  allow {
-    protocol = "tcp"
-    ports    = ["80"]
-  }
-
-  source_ranges = ["10.10.0.0/16"]
-  target_tags = ["frontend"]
-}
 
