@@ -30,6 +30,19 @@ resource "google_compute_firewall" "allow_http" {
   source_ranges = ["0.0.0.0/0"]
 }
 
+resource "google_compute_firewall" "allow_ssh" {
+  name    = "allow-ssh"
+  network = google_compute_network.vpc.name
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+
+  source_ranges = ["35.235.240.0/20"] 
+  
+}
+
 resource "google_compute_router" "nat_router" {
   name    = "nat-router"
   region  = var.region
@@ -154,7 +167,7 @@ resource "google_project_iam_member" "frontend_artifact_reader" {
 }
 
 resource "google_compute_instance_template" "frontend_tpl" {
-  name_prefix = "decommoir-frontend-"
+  name_prefix  = "decommoir-frontend-"
   machine_type = "e2-micro"
 
   tags = ["frontend"]
@@ -165,11 +178,7 @@ resource "google_compute_instance_template" "frontend_tpl" {
   }
 
   network_interface {
-    subnetwork = google_compute_subnetwork.public.id
-
-    access_config {
-      # Ephemeral public IP
-    }
+    subnetwork = google_compute_subnetwork.private.id
   }
 
   disk {
@@ -183,10 +192,13 @@ resource "google_compute_instance_template" "frontend_tpl" {
     set -e
 
     apt-get update
-    apt-get install -y docker.io
+    apt-get install -y docker.io openssh-server
 
     systemctl enable docker
     systemctl start docker
+
+    systemctl enable ssh
+    systemctl start ssh
 
     gcloud auth configure-docker asia-southeast2-docker.pkg.dev --quiet
 
@@ -196,6 +208,7 @@ resource "google_compute_instance_template" "frontend_tpl" {
       ${var.frontend_image}
   EOT
 }
+
 
 resource "google_compute_health_check" "frontend_hc" {
   name = "frontend-hc"
