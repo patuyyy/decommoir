@@ -142,10 +142,6 @@ resource "google_compute_instance_group_manager" "backend_mig" {
     initial_delay_sec = 120
   }
 
-  named_port {
-    name = "be-port"
-    port = 3000
-  }
 }
 
 resource "google_compute_firewall" "allow_backend_internal" {
@@ -239,10 +235,6 @@ resource "google_compute_instance_group_manager" "frontend_mig" {
     initial_delay_sec = 120
   }
 
-  named_port {
-    name = "http"
-    port = 80
-  }
 }
 
 resource "google_compute_firewall" "allow_frontend_http" {
