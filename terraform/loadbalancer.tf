@@ -81,7 +81,7 @@ resource "google_compute_managed_ssl_certificate" "decommoir_cert" {
   name = "decommoir-ssl-cert"
 
   managed {
-    domains = ["decommoir.online", "www.decommoir.online"]
+    domains = ["decommoir.online", "www.decommoir.online", "be.decommoir.online"]
   }
 }
 
