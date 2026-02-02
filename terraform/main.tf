@@ -82,6 +82,9 @@ resource "google_compute_instance_template" "backend_tpl" {
 
   tags = ["backend"]
 
+  lifecycle {
+    create_before_destroy = true
+  }
   service_account {
     email  = google_service_account.backend_sa.email
     scopes = ["cloud-platform"]
